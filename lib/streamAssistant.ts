@@ -14,6 +14,8 @@ export type AssistantPayload = {
   mode: AssistantMode
   locale: string
   advert?: string
+  /** Matching only: a URL the server fetches and reads instead of pasted text. */
+  url?: string
   question?: string
   history?: ChatMessage[]
   markedIds?: string[]

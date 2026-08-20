@@ -35,5 +35,9 @@ export type MatchLine =
   | {type: 'order'; ids: string[]}
   | {type: 'finding'; bucket: MatchBucket; text: string; refs?: string[]}
   | {type: 'reject'; text: string}
+  // Emitted first when the ad came from a URL: the extracted text, so the
+  // client can keep it for chat context and session restore.
+  | {type: 'advert'; text: string}
 
-export type AssistantErrorCode = 'not_configured' | 'rate_limited' | 'too_long' | 'bad_request'
+export type AssistantErrorCode =
+  'not_configured' | 'rate_limited' | 'too_long' | 'bad_request' | 'invalid_url' | 'fetch_failed'

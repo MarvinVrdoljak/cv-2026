@@ -5,9 +5,13 @@ import {useAppState} from '@/components/app/AppState'
 import styles from './StatusBar.module.css'
 
 /**
- * The live half of the status bar: run state, model and latency. Values are
- * `—` until a request has actually produced them — an instrument at rest
- * shows no measurement rather than a plausible-looking placeholder.
+ * The live half of the status bar: what the assistant is doing, and — once it
+ * has done something — which model answered and how long it took.
+ *
+ * The first readout names the assistant rather than saying "status", because a
+ * bar that reads "status: ready" leaves open what is ready. Model and latency
+ * appear only after a request has produced them: an instrument shows a
+ * measurement or nothing, never a label with a dash where a value belongs.
  */
 export function StatusReadouts() {
   const t = useTranslations('status')
@@ -18,24 +22,26 @@ export function StatusReadouts() {
   return (
     <>
       <div className={styles.readout}>
-        <dt className={styles.key}>{t('state')}</dt>
+        <dt className={styles.key}>{t('assistant')}</dt>
         <dd className={styles.value} data-state={streaming ? 'streaming' : 'idle'}>
           <span className={styles.dot} aria-hidden="true" />
           {streaming ? t('streaming') : t('ready')}
         </dd>
       </div>
 
-      <div className={`${styles.readout} ${styles.readoutSecondary}`}>
-        <dt className={styles.key}>{t('model')}</dt>
-        <dd className={styles.value}>{status.model ?? t('pending')}</dd>
-      </div>
+      {status.model !== null ? (
+        <div className={`${styles.readout} ${styles.readoutSecondary}`}>
+          <dt className={styles.key}>{t('model')}</dt>
+          <dd className={styles.value}>{status.model}</dd>
+        </div>
+      ) : null}
 
-      <div className={`${styles.readout} ${styles.readoutSecondary}`}>
-        <dt className={styles.key}>{t('latency')}</dt>
-        <dd className={styles.value}>
-          {status.latencyMs !== null ? `${status.latencyMs} ms` : t('pending')}
-        </dd>
-      </div>
+      {status.latencyMs !== null ? (
+        <div className={`${styles.readout} ${styles.readoutSecondary}`}>
+          <dt className={styles.key}>{t('latency')}</dt>
+          <dd className={styles.value}>{status.latencyMs} ms</dd>
+        </div>
+      ) : null}
     </>
   )
 }

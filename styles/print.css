@@ -1,8 +1,19 @@
 /* ============================================================
-   Print — the CV is a document again. Interface disappears:
-   chrome, chat, matching input and marking controls are not printed.
+   Print — the fallback path to paper.
+
+   The typeset documents come from /api/pdf (see lib/pdf/): real pages, a
+   running foot, entries that keep together. This stylesheet handles what a PDF
+   route cannot — someone pressing Ctrl+P, with or without JavaScript. So it
+   aims at the same result with the means CSS has: the instrument disappears,
+   the document stays.
+
    Unlayered on purpose so it wins over CSS Modules.
    ============================================================ */
+@page {
+  /* Room for a reader's pen on the left, a little more at the foot. */
+  margin: 16mm 15mm 18mm;
+}
+
 @media print {
   :root {
     --color-background: #fff;
@@ -12,6 +23,10 @@
     --color-text-muted: #333;
     --color-rule: #bbb;
     --color-rule-strong: #888;
+
+    /* No active states on paper: nothing hovers, nothing streams. The accent
+       is kept only where it marks something the reader chose (the summary). */
+    --color-accent-wash: #fff;
   }
 
   [data-print='hide'] {
@@ -21,7 +36,7 @@
   html,
   body {
     background: #fff;
-    font-size: 11pt;
+    font-size: 10.5pt;
   }
 
   /* Release the document from the app frame */
@@ -48,17 +63,51 @@
     break-after: avoid;
   }
 
+  /* No line left behind: a single line of a paragraph at a page edge reads as
+     an error, and the CV is judged on exactly that kind of detail. */
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* The highlight is a screen state — on paper it would be an unexplained
+     grey box, so entries print flat whatever the matching decided. */
+  [data-highlight='true'],
+  [data-entry] {
+    background: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Relevance sorting is a screen affordance too: paper keeps the CV in its
+     documented, antichronological order. */
+  [data-entry] {
+    order: 0 !important;
+  }
+
   /* Resolve links so a printed CV stays usable */
   [data-print='resolve-url']::after {
     content: ' (' attr(href) ')';
-    font-size: 9pt;
+    font-size: 8.5pt;
     word-break: break-all;
   }
 
   /* When the summary is being printed, it becomes the whole page: the CV
-     document and everything else step out, the dialog lays flat. */
+     document and everything else step out, the dialog lays flat. The attribute
+     is set for as long as the dialog is open, so a plain Ctrl+P hits this too,
+     not only the PDF button. */
   :root[data-summary-print='true'] [data-print='document'] {
     display: none !important;
+  }
+
+  /* The backdrop is a screen device — fixed, dark, and on paper it would print
+     as a grey wash on the first sheet. It becomes an ordinary block. */
+  :root[data-summary-print='true'] [data-print='overlay'] {
+    position: static;
+    display: block;
+    padding: 0;
+    background: none;
+    animation: none;
   }
 
   :root[data-summary-print='true'] [data-print='summary'] {
@@ -69,5 +118,7 @@
     border: none;
     border-radius: 0;
     padding: 0;
+    box-shadow: none;
+    animation: none;
   }
 }

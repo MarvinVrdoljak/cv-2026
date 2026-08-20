@@ -51,7 +51,7 @@ export async function AppShell({locale, children, panel}: AppShellProps) {
         <NoteTray />
       </div>
 
-      <StatusBar />
+      <StatusBar locale={locale} />
       <KeyBindings />
     </div>
   )

@@ -17,7 +17,7 @@ export async function MarkToggle({entryId, description}: MarkToggleProps) {
   const t = await getTranslations('cv')
 
   return (
-    <label className={styles.root}>
+    <label className={styles.root} data-print="hide">
       <input
         className={styles.input}
         type="checkbox"

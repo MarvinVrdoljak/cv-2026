@@ -10,8 +10,11 @@
   padding-inline: var(--spacing-20);
 }
 
+/* Hidden on a phone: the status bar right below already carries the count, and
+   repeating it here would leave a bare number without its label. The room goes
+   to the actions, which split the width instead. */
 .label {
-  display: flex;
+  display: none;
   align-items: baseline;
   gap: var(--spacing-8);
   margin: 0;
@@ -38,18 +41,52 @@
   content: counter(marks, decimal-leading-zero);
 }
 
+/* Phone: the two actions share the strip, wide enough for a thumb. */
 .actions {
   display: flex;
-  flex: none;
+  flex: 1;
   gap: var(--spacing-8);
 }
 
 .action {
+  flex: 1;
+  justify-content: center;
   white-space: nowrap;
+}
+
+/* One label per width: the short one on a phone, the full one from the medium
+   breakpoint up. Both are hidden from assistive tech — the button carries the
+   full wording in `aria-label` either way. */
+.long {
+  display: none;
+}
+
+.short {
+  display: inline;
 }
 
 @media (--bp-medium-up) {
   .root {
     padding-inline: var(--spacing-32);
+  }
+
+  .label {
+    display: flex;
+  }
+
+  .actions {
+    flex: none;
+  }
+
+  .action {
+    flex: none;
+  }
+
+  .long {
+    display: inline;
+  }
+
+  .short {
+    display: none;
   }
 }

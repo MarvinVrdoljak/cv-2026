@@ -14,7 +14,8 @@
     "identity": "Lebenslauf",
     "sectionsLabel": "Abschnitte",
     "localeLabel": "Sprache",
-    "print": "Drucken"
+    "pdf": "PDF",
+    "pdfLabel": "Lebenslauf als PDF öffnen"
   },
   "sections": {
     "profile": "Kurzprofil",
@@ -39,12 +40,16 @@
   },
   "match": {
     "label": "Stellenanzeige",
-    "hint": "Text einfügen — der Abgleich erscheint über dem Lebenslauf und sortiert ihn um.",
+    "hint": "Stellenanzeige einfügen und abgleichen: Die KI zeigt dir, wie gut der Lebenslauf auf die Ausschreibung passt.",
+    "urlHint": "Öffentlichen Link zur Ausschreibung einfügen und abgleichen: Die KI zeigt dir, wie gut der Lebenslauf auf die Ausschreibung passt.",
+    "sourceLabel": "Eingabeart",
+    "sourceText": "Text",
+    "sourceUrl": "URL",
     "placeholder": "Stellenanzeige hier einfügen …",
+    "urlPlaceholder": "https://… Link zur Stellenanzeige",
     "submit": "Abgleichen",
     "analysing": "Analysiere …",
     "reset": "Zurücksetzen",
-    "limit": "max. 6000 Zeichen",
     "resultFit": "Was passt",
     "resultPartial": "Was teilweise passt",
     "resultGap": "Was fehlt",
@@ -76,30 +81,40 @@
   "notes": {
     "label": "Mitschrift",
     "summary": "Zusammenfassung erzeugen",
+    "summaryShort": "Zusammenfassung",
     "generating": "Erzeuge …",
     "reset": "Markierungen löschen",
+    "resetShort": "Löschen",
     "summaryTitle": "Zusammenfassung",
     "markedLabel": "Markierte Einträge",
     "assessmentLabel": "Einordnung",
     "copy": "Kopieren",
     "copied": "Kopiert",
-    "print": "Drucken",
-    "close": "Schließen"
+    "close": "Schließen",
+    "pdf": "PDF öffnen"
+  },
+  "pdf": {
+    "cvTitle": "Lebenslauf",
+    "page": "Seite {page}/{total}",
+    "generated": "Erstellt {date}",
+    "markedCount": "{count, plural, =1 {# Eintrag} other {# Einträge}}",
+    "assessmentMissing": "Keine Einordnung erzeugt."
   },
   "status": {
     "label": "Systemstatus",
-    "state": "Status",
+    "assistant": "Assistent",
     "ready": "bereit",
     "streaming": "streamt",
     "model": "Modell",
     "latency": "Antwortzeit",
-    "marks": "Markierungen",
-    "pending": "—"
+    "marks": "Markierungen"
   },
   "errors": {
     "not_configured": "Die KI-Funktionen sind nicht konfiguriert (kein API-Schlüssel).",
     "rate_limited": "Zu viele Anfragen. Bitte kurz warten.",
     "too_long": "Die Eingabe ist zu lang.",
+    "invalid_url": "Diese URL ist ungültig oder nicht erreichbar.",
+    "fetch_failed": "Die URL konnte nicht geladen werden. Bitte den Text der Anzeige einfügen.",
     "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
     "dismiss": "Schließen"
   }

@@ -64,3 +64,16 @@ export function formatYearRange(
   const end = parse(to).year
   return start === end ? `${start}` : `${start}–${end}`
 }
+
+/**
+ * Which duration message a span needs — "6 J. 2 M.", "6 J." or "4 M.".
+ * The screen and the PDF label the same span, so the branch lives here rather
+ * than once per renderer; the caller passes the key to its own translator.
+ */
+export function pickDurationKey(
+  years: number,
+  months: number
+): 'durationYears' | 'durationMonths' | 'durationYearsMonths' {
+  if (years > 0) return months > 0 ? 'durationYearsMonths' : 'durationYears'
+  return 'durationMonths'
+}

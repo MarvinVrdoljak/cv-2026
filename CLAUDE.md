@@ -48,18 +48,51 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   `marks` speist Zähler, `:has()` blendet die Leiste ein, `type="reset"` (`form="cv-marks"`)
   leert alles — **ohne JS**. Die Zusammenfassung liest die markierten ids
   ([SummaryDialog](components/app/SummaryDialog.tsx)), streamt eine Einordnung, bietet Kopieren
-  und eine Druckansicht.
+  und ein gesetztes PDF (siehe unten).
 - **Chrome:** [components/shell/](components/shell) — feste Mono-Leisten, Statuszeile mit
-  echten Readouts (State/Modell/Antwortzeit live aus dem Stream, `—` solange nichts lief),
-  Tastaturkürzel (⌘/Ctrl K, „/", Esc) über `KeyBindings`.
+  echten Readouts, Tastaturkürzel (⌘/Ctrl K, „/", Esc) über `KeyBindings`. Die Leiste zeigt
+  nur, was es gibt: „Assistent" (nicht „Status" — sonst bleibt offen, _was_ bereit ist) immer,
+  Modell/Antwortzeit erst nach einer Anfrage, Markierungen erst wenn markiert wurde (per
+  `:has()` aus AppShell, also ohne JS).
+- **Mobiles Chrome:** Chat-Leiste und Tray liegen über dem Dokument, deshalb reserviert
+  `.frame` unten genau deren Höhe (`--chat-bar` + `--chrome-bottom`, plus `--tray-height`
+  wenn markiert ist) — sonst ist der Schluss des CV nicht lesbar. Der zugeklappte Chat
+  animiert über `grid-template-rows`; das animierte Grid-Item (`.track`) darf **kein** Padding
+  tragen, sonst klappt es nie ganz zu. Nach dem Senden geht der Fokus zurück ins Eingabefeld
+  und `data-open` hält das Panel während des Streamens offen — sonst klappte es beim Senden zu
+  (der Senden-Knopf wird `disabled` und verliert den Fokus).
 - **Typografie:** IBM Plex Sans (Inhalt) + IBM Plex Mono (Interface) via `next/font`. Der
   Sans/Mono-Wechsel trennt Inhalt von Interface. Zeilenlänge geprüft auf ~70 Zeichen
   (`--measure: 56ch`; `1ch` = Breite der „0", breiter als das Durchschnittszeichen).
 - **Farbe/Motion:** ein Akzent nur für aktive Zustände; Palette rechnerisch gegen WCAG AA
   geprüft (Light + Dark). Motion 150–250 ms mit eigenen Kurven, `prefers-reduced-motion`
   global respektiert. Dark Mode folgt der Umgebung (kein Umschalter — laut Briefing verboten).
-- **Print:** [styles/print.css](styles/print.css) blendet das Interface aus; `data-print`-Haken
-  markieren, was Dokument bleibt.
+- **PDF (Hauptweg auf Papier):** [app/api/pdf/route.tsx](app/api/pdf/route.tsx) setzt beide
+  Dokumente serverseitig mit `@react-pdf/renderer` — aus derselben einen Quelle wie der
+  Bildschirm. `GET /api/pdf?doc=cv&locale=de` liefert den Lebenslauf (deshalb ein normaler
+  Link in der Statusleiste: **funktioniert ohne JS**), `POST /api/pdf` die Notiz-Zusammen-
+  fassung — sie muss markierte ids und die Einordnung mitschicken, die nur im Client liegen
+  und in keiner URL etwas zu suchen haben. Der Dialog schickt dafür ein **Formular** mit
+  `target="_blank"` statt eines `fetch`: dann ist es eine echte Navigation, der Tab landet auf
+  `/api/pdf` (gleiche Art Adresse wie beim CV-Link, kein `blob:`) und der Viewer bekommt den
+  Dateinamen aus dem Header. Die Route nimmt deshalb **beide** Bodys — Formular _und_ JSON
+  (letzteres für programmatische Aufrufe) — und meldet Fehler entsprechend: als lesbare
+  HTML-Seite bei einer Navigation, als JSON bei einem `fetch`. Dokumente in
+  [lib/pdf/](lib/pdf): `frame.tsx` (Seite, Fuß, Abschnittsköpfe, id-Spalte), `CvPdf.tsx`,
+  `SummaryPdf.tsx`, Papier-Tokens in `theme.ts`, Schriften in `fonts.ts`. Strings kommen als
+  Label-Objekt aus der Route ([labels.ts](lib/pdf/labels.ts)) — die Dokumente bleiben reine
+  Funktionen von Daten + Labels.
+- **Papier-Konventionen** (in `theme.ts` festgehalten, beim Erweitern einhalten): **vier
+  Schriftgrößen** für das ganze Dokument (`mono` Interface · `small` Sekundärtext · `body`
+  Fließtext · `title` Eintragstitel) — Hierarchie über Gewicht, Auszeichnung und Abstand, nicht
+  über Größe. Alles Mono ist Interface und steht **uppercase mit `tracking.label`** (ids,
+  Kontaktzeile, Abschnitts- und Meta-Zeilen), genau wie am Bildschirm. Jeder Eintrag hat
+  dieselbe Form: Mono-Zeile oben, Titel darunter. Der erste Eintrag eines Abschnitts trägt
+  **keinen** Trennstrich (die Abschnittslinie steht schon da).
+- **Print (Fallback):** [styles/print.css](styles/print.css) blendet das Interface aus;
+  `data-print`-Haken markieren, was Dokument bleibt. Bleibt bewusst erhalten: Ctrl+P muss
+  auch ohne JS ein brauchbares Blatt ergeben. Ist der Zusammenfassungs-Dialog offen, steht
+  `data-summary-print` auf `<html>` — dann druckt Ctrl+P nur die Notiz.
 
 ## Konventionen (aus dem Blueprint)
 
@@ -108,12 +141,36 @@ Alle vier laufen aktuell fehlerfrei durch.
 ## Umgebung
 
 `.env.local` mit `OPENAI_API_KEY=…` anlegen (nicht im Repo, nie als `NEXT_PUBLIC_*`).
-Optional: `OPENAI_MODEL` (Default `gpt-4o-mini`). Ohne Key liefert die Route `503` und die
-Oberfläche zeigt „KI-Funktionen nicht konfiguriert".
+Optional: `OPENAI_MODEL` überschreibt die Modellwahl. Ohne diese Variable folgt der Default
+der Umgebung: Produktion (`NODE_ENV=production`) nutzt `gpt-4o` (stärkeres Paraphrasen-Reasoning
+hält den Abgleich ehrlich, ohne gefällig zu werden), Entwicklung bleibt auf dem schnellen,
+günstigen `gpt-4o-mini`. Ohne Key liefert die Route `503` und die Oberfläche zeigt
+„KI-Funktionen nicht konfiguriert".
 
 **Dev-Mock:** Ohne Key und mit `ASSISTANT_MOCK=1` (nur `NODE_ENV!==production`) streamt die
 Route ein klar mit `[DEV-MOCK]` gekennzeichnetes Skript — zum Testen der Interaktionen ohne
 Key/Kosten. In Produktion immer aus.
+
+**URL-Abgleich:** Im Matching kann statt Text eine URL kommen ([lib/fetchAdvert.ts](lib/fetchAdvert.ts)).
+Erst ein direkter, SSRF-gehärteter Server-Fetch (nur http/s, Host muss öffentlich auflösen,
+Redirects hop-weise revalidiert, Zeit-/Größen-Cap). Scheitert der (Portale rendern per JS und
+kappen Nicht-Browser-Verbindungen), greift ein **Reader-Fallback** (rendert die Seite, liefert
+Text) — die eingegebene URL verlässt dabei den Server Richtung Drittdienst. Abschaltbar mit
+`ADVERT_READER=0`; optionaler Key via `ADVERT_READER_KEY`. Der Fallback läuft nur nach
+bestandener Public-Host-Prüfung und nie bei `invalid_url` — kein SSRF-Bypass. Der extrahierte
+Text wird dem Client als erste NDJSON-Zeile (`type:'advert'`) zurückgegeben, damit Chat-Kontext
+und Restore identisch zum Texteingabe-Modus funktionieren.
+
+**Security-Header:** Statische Header (HSTS nur in Prod, `X-Content-Type-Options`, `X-Frame-Options`,
+`Referrer-Policy`, `Permissions-Policy`, `X-Robots-Tag`) in `next.config.mjs` (`headers()`). Die
+**CSP** trägt einen **Per-Request-Nonce** und liegt deshalb in [middleware.ts](middleware.ts):
+Prod strikt (`script-src 'self' 'nonce-…' 'strict-dynamic'`, `upgrade-insecure-requests`), Dev
+gelockert (`'unsafe-eval' 'unsafe-inline'`, `ws:` — sonst bricht HMR). Die Middleware setzt die CSP
+**auch auf die Request-Header**, damit Next seine Inline-(RSC/Hydration-)Skripte automatisch nonct;
+das Layout liest den Nonce über `headers().get('x-nonce')` und hängt ihn ans einzige eigene
+Inline-Skript (`data-js`). Folgen: `style-src` behält `'unsafe-inline'` (next/font + Next injizieren
+Inline-Styles); das Layout ist durch `headers()` **dynamisch** (kein statisches Prerender mehr). Wer
+ein weiteres Inline-`<script>` ergänzt, muss ihm den Nonce mitgeben, sonst blockt Prod es.
 
 ## Bekannte Randbedingungen
 
@@ -129,3 +186,17 @@ Key/Kosten. In Produktion immer aus.
   Pages möglich; im Layout narrowt `hasLocale()`.
 - **`templates/`** ist aus `tsconfig.json`, Prettier und Stylelint ausgeschlossen, damit die
   doppelte `declare module 'next-intl'` keinen Konflikt erzeugt.
+- **PDF-Schriften liegen als WOFF in [assets/fonts/](assets/fonts):** `fontkit` (in
+  `@react-pdf/renderer`) liest **kein WOFF2**, und IBM Plex gibt es auf npm nicht als TTF.
+  Die Dateien kommen aus `@ibm/plex-sans` / `@ibm/plex-mono` (`fonts/complete/woff`) — die
+  **Subsets von `@fontsource/*` scheitern** beim Parsen („Offset is outside the bounds of the
+  DataView"). `assets/portrait-print.jpg` ist die einmalig nach Graustufe konvertierte
+  Fassung von `public/portrait.jpg` (CSS-Filter gibt es im PDF nicht).
+- **`next.config.mjs`** braucht dafür beides: `serverExternalPackages` für den Renderer und
+  `outputFileTracingIncludes` für `./assets/**`, weil die Route die Dateien erst zur Laufzeit
+  über `process.cwd()` liest.
+- **Zwei Eigenheiten von `@react-pdf/renderer`** (beide teuer erkauft, nicht „aufräumen"):
+  `fixed`-Elemente müssen **vor** dem Seiteninhalt stehen, sonst werden sie nicht gezeichnet;
+  und ein dynamischer Textknoten (`render`-Prop) darf nicht mit `bottom` positioniert werden —
+  beim Paginieren wird seine Box auf Höhe 0 gesetzt. Deshalb hängt der Seitenfuß über
+  `theme.foot` an `top`.

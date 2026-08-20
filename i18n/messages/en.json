@@ -14,7 +14,8 @@
     "identity": "Curriculum Vitae",
     "sectionsLabel": "Sections",
     "localeLabel": "Language",
-    "print": "Print"
+    "pdf": "PDF",
+    "pdfLabel": "Open the CV as a PDF"
   },
   "sections": {
     "profile": "Profile",
@@ -39,12 +40,16 @@
   },
   "match": {
     "label": "Job ad",
-    "hint": "Paste the text — the match appears above the CV and reorders it.",
+    "hint": "Paste a job ad and run the match: the AI shows you how well the CV fits the role.",
+    "urlHint": "Paste a public link to the ad and run the match: the AI shows you how well the CV fits the role.",
+    "sourceLabel": "Input type",
+    "sourceText": "Text",
+    "sourceUrl": "URL",
     "placeholder": "Paste the job ad here …",
+    "urlPlaceholder": "https://… link to the job ad",
     "submit": "Match",
     "analysing": "Analysing …",
     "reset": "Reset",
-    "limit": "6000 characters max",
     "resultFit": "What fits",
     "resultPartial": "What partly fits",
     "resultGap": "What is missing",
@@ -76,30 +81,40 @@
   "notes": {
     "label": "Notes",
     "summary": "Generate summary",
+    "summaryShort": "Summary",
     "generating": "Generating …",
     "reset": "Clear marks",
+    "resetShort": "Clear",
     "summaryTitle": "Summary",
     "markedLabel": "Marked entries",
     "assessmentLabel": "Assessment",
     "copy": "Copy",
     "copied": "Copied",
-    "print": "Print",
-    "close": "Close"
+    "close": "Close",
+    "pdf": "Open PDF"
+  },
+  "pdf": {
+    "cvTitle": "Curriculum Vitae",
+    "page": "Page {page}/{total}",
+    "generated": "Created {date}",
+    "markedCount": "{count, plural, =1 {# entry} other {# entries}}",
+    "assessmentMissing": "No assessment was produced."
   },
   "status": {
     "label": "System status",
-    "state": "State",
+    "assistant": "Assistant",
     "ready": "ready",
     "streaming": "streaming",
     "model": "Model",
     "latency": "Latency",
-    "marks": "Marks",
-    "pending": "—"
+    "marks": "Marks"
   },
   "errors": {
     "not_configured": "The AI features are not configured (no API key).",
     "rate_limited": "Too many requests. Please wait a moment.",
     "too_long": "The input is too long.",
+    "invalid_url": "That URL is invalid or not reachable.",
+    "fetch_failed": "Couldn't load that URL. Please paste the ad text instead.",
     "generic": "Something went wrong. Please try again.",
     "dismiss": "Dismiss"
   }

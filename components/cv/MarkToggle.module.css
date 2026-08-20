@@ -1,5 +1,11 @@
+/* Phone: the control sits at the right end of the entry's top row, so the word
+   is set before the box and grows leftward — the box then stays in the same
+   column as every unchecked one instead of being shoved aside when the state
+   appears. The reading order for assistive tech is unaffected: it comes from
+   the input's `aria-label`, not from this order. */
 .root {
   display: inline-flex;
+  flex-direction: row-reverse;
   align-items: center;
   gap: var(--spacing-8);
   cursor: pointer;
@@ -65,4 +71,11 @@
 
 .root:has(.input:checked) .stateActive {
   display: inline;
+}
+
+/* From here the control sits under the id, left-aligned — the box leads again. */
+@media (--bp-medium-up) {
+  .root {
+    flex-direction: row;
+  }
 }

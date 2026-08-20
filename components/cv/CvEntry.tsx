@@ -1,7 +1,7 @@
 import {getTranslations} from 'next-intl/server'
 import type {Locale} from '@/i18n/routing'
 import type {CvExperience} from '@/data/cv'
-import {durationInMonths, formatMonth, splitDuration} from '@/lib/format'
+import {durationInMonths, formatMonth, pickDurationKey, splitDuration} from '@/lib/format'
 import {CvAddress} from './CvAddress'
 import {MarkToggle} from './MarkToggle'
 import styles from './CvEntry.module.css'
@@ -24,12 +24,7 @@ export async function CvEntry({entry, locale}: CvEntryProps) {
 
   const total = durationInMonths(entry.from, entry.to)
   const {years, months} = splitDuration(total)
-  const duration =
-    years > 0
-      ? months > 0
-        ? t('durationYearsMonths', {years, months})
-        : t('durationYears', {years})
-      : t('durationMonths', {months})
+  const duration = t(pickDurationKey(years, months), {years, months})
 
   return (
     <article

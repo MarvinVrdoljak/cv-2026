@@ -50,6 +50,8 @@
   color: var(--color-text-muted);
 }
 
+/* Set like the contact row in the document head: mono, tracked out, upper
+   case — this is a system reference, not part of the prose. */
 .credential {
   display: flex;
   flex-wrap: wrap;
@@ -58,18 +60,26 @@
   margin: var(--spacing-8) 0 0;
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
 }
 
+/* Same link treatment as the contact links: quiet at rest, with the hairline
+   underline carrying the affordance. The accent stays reserved for active
+   states, so a link sitting there is not one of them. */
 .verify {
-  color: var(--color-accent);
-  text-decoration-color: var(--color-accent);
+  color: var(--color-text-muted);
+  text-decoration-color: var(--color-rule-strong);
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
-  transition: color var(--duration-fast) var(--ease-standard);
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    text-decoration-color var(--duration-fast) var(--ease-standard);
 }
 
 .verify:hover {
-  color: var(--color-accent-strong);
+  color: var(--color-text);
+  text-decoration-color: var(--color-text);
 }
 
 @media (--bp-medium-up) {

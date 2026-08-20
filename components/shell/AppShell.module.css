@@ -34,7 +34,16 @@
   margin-inline: auto;
   padding-top: var(--chrome-top);
 
-  /* padding-bottom (room for mobile chat bar + tray + status bar) disabled */
+  /* Room for what is fixed over the document: on a phone that is the chat bar
+     and the status bar. Without it the last entry sits behind them and cannot
+     be read at all — measured at 375px, the closing entry was cut by 100px. */
+  padding-bottom: calc(var(--chat-bar) + var(--chrome-bottom));
+}
+
+/* The tray only takes space once it exists, so its height is only reserved
+   then — same condition that reveals it. */
+.root:has([data-mark]:checked) .frame {
+  padding-bottom: calc(var(--chat-bar) + var(--tray-height) + var(--chrome-bottom));
 }
 
 .document {
@@ -43,14 +52,21 @@
 }
 
 .panel {
-  /* Mobile: a bar pinned above the chrome that opens on focus */
+  /* Mobile: a bar pinned above the chrome that opens on focus. It sits on the
+     status bar and only steps up when the tray is actually out — reserving the
+     tray's height unconditionally left an empty 44px band below the bar. */
   position: fixed;
   right: 0;
-  bottom: calc(var(--chrome-bottom) + var(--tray-height));
+  bottom: var(--chrome-bottom);
   left: 0;
   z-index: 20;
   border-top: 1px solid var(--color-rule-strong);
   background: var(--color-surface);
+  transition: bottom var(--duration-base) var(--ease-entrance);
+}
+
+.root:has([data-mark]:checked) .panel {
+  bottom: calc(var(--chrome-bottom) + var(--tray-height));
 }
 
 /*
@@ -78,6 +94,17 @@
   visibility: visible;
 }
 
+/* The marks readout in the status bar appears on the same condition as the
+   tray: an instrument shows a count once there is something to count. Driven
+   from here because only this element sees both the checkboxes and the bar. */
+.root [data-marks-readout] {
+  display: none;
+}
+
+.root:has([data-mark]:checked) [data-marks-readout] {
+  display: flex;
+}
+
 @media (--bp-medium-up) {
   .document {
     padding-inline: var(--spacing-32);
@@ -85,10 +112,15 @@
 }
 
 @media (--bp-large-up) {
+  /* The chat is a column here, not a bar over the document, so only the
+     status bar (and the tray, when it is out) needs room. */
   .frame {
     grid-template-columns: minmax(0, 1fr) var(--panel-width);
+    padding-bottom: var(--chrome-bottom);
+  }
 
-    /* padding-bottom (large-screen variant) disabled */
+  .root:has([data-mark]:checked) .frame {
+    padding-bottom: calc(var(--tray-height) + var(--chrome-bottom));
   }
 
   .panel {

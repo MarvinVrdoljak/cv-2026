@@ -100,6 +100,11 @@
   --chrome-bottom: 28px;
   --tray-height: 44px;
 
+  /* The mobile chat bar: the input row that stays put when the panel folds.
+     It sets the form's height, so the document can reserve exactly this much
+     room below itself instead of guessing at it. */
+  --chat-bar: 60px;
+
   /* Wide enough for the identifier and the mark control's mono label */
   --gutter-id: 104px;
   --panel-width: 366px;

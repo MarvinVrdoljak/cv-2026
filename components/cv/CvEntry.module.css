@@ -126,15 +126,26 @@
   content: '';
 }
 
+/* The body's bottom edge must sit on the last line of text, not below it: the
+   gutter stretches to the body's height and drops the mark control onto that
+   edge, so a trailing margin here would float the checkbox past the last line. */
+.highlight:last-child {
+  margin-bottom: 0;
+}
+
 @media (--bp-medium-up) {
   .root {
     padding: var(--spacing-24) 0;
   }
 
-  /* Desktop: the margin holds the identifier and, under it, the control */
+  /* Desktop: the margin holds the identifier at the top and drops the mark
+     control to the bottom, level with the entry's last line of text. The
+     gutter is a grid cell, so it already stretches to the body's full height —
+     space-between only has to place the two ends. */
   .gutter {
     flex-direction: column;
     align-items: flex-start;
+    justify-content: space-between;
     gap: var(--spacing-10);
   }
 }

@@ -19,6 +19,7 @@ export function ChatPanel() {
   const {chat, runChat, clearChat} = useAppState()
   const [text, setText] = useState('')
   const transcriptRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const streaming = chat.state === 'streaming'
 
@@ -44,76 +45,86 @@ export function ChatPanel() {
     if (!value.trim() || streaming) return
     runChat(value)
     setText('')
+    // Back into the input, always. On mobile the panel is unfolded by
+    // `:focus-within`, and submitting disables the send button — which threw
+    // focus out of the panel and folded it shut over the arriving answer.
+    inputRef.current?.focus()
   }
 
   return (
-    <div className={styles.root}>
+    /* `data-open` holds the panel open while an answer streams, even if focus
+       is lost meanwhile (a dismissed keyboard, a tap on the document). Folding
+       stays the rule when nothing is happening — that is the mobile model. */
+    <div className={styles.root} data-open={streaming ? 'true' : undefined}>
       <div className={styles.collapsible}>
-        <div className={styles.inner}>
-          <div className={styles.head}>
-            <h2 className={styles.title}>{t('title')}</h2>
-            <KeyHint combo="slash" />
-            {chat.messages.length > 0 ? (
-              <button className={styles.clear} type="button" onClick={clearChat}>
-                {t('clear')}
-              </button>
+        {/* The animated row itself, unpadded — see the note in the module. */}
+        <div className={styles.track}>
+          <div className={styles.inner}>
+            <div className={styles.head}>
+              <h2 className={styles.title}>{t('title')}</h2>
+              <KeyHint combo="slash" />
+              {chat.messages.length > 0 ? (
+                <button className={styles.clear} type="button" onClick={clearChat}>
+                  {t('clear')}
+                </button>
+              ) : null}
+            </div>
+
+            <p className={styles.hint}>{t('hint')}</p>
+
+            <div
+              className={styles.transcript}
+              ref={transcriptRef}
+              aria-live="polite"
+              aria-label={t('streamLabel')}
+            >
+              {chat.messages.length === 0 ? (
+                <p className={styles.empty}>{t('empty')}</p>
+              ) : (
+                <ul className={styles.messages}>
+                  {chat.messages.map((message) => (
+                    <li className={styles.message} key={message.id} data-role={message.role}>
+                      <span className={styles.role}>
+                        {message.role === 'user' ? t('you') : t('answerLabel')}
+                      </span>
+                      <div className={styles.body}>
+                        {message.role === 'assistant' ? (
+                          <>
+                            <RefText content={message.content} />
+                            {streaming && message.content === '' ? (
+                              <span className={styles.caret} aria-hidden="true" />
+                            ) : null}
+                          </>
+                        ) : (
+                          message.content
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {chat.messages.length === 0 && suggestions.length > 0 ? (
+              <div className={styles.suggestions}>
+                <p className={styles.suggestionsLabel}>{t('suggestionsLabel')}</p>
+                <ul className={styles.chips}>
+                  {suggestions.map((question) => (
+                    <li className={styles.chipItem} key={question}>
+                      <button
+                        className={styles.chip}
+                        type="button"
+                        onClick={() => send(question)}
+                        disabled={streaming}
+                      >
+                        {question}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ) : null}
           </div>
-
-          <p className={styles.hint}>{t('hint')}</p>
-
-          <div
-            className={styles.transcript}
-            ref={transcriptRef}
-            aria-live="polite"
-            aria-label={t('streamLabel')}
-          >
-            {chat.messages.length === 0 ? (
-              <p className={styles.empty}>{t('empty')}</p>
-            ) : (
-              <ul className={styles.messages}>
-                {chat.messages.map((message) => (
-                  <li className={styles.message} key={message.id} data-role={message.role}>
-                    <span className={styles.role}>
-                      {message.role === 'user' ? t('you') : t('answerLabel')}
-                    </span>
-                    <div className={styles.body}>
-                      {message.role === 'assistant' ? (
-                        <>
-                          <RefText content={message.content} />
-                          {streaming && message.content === '' ? (
-                            <span className={styles.caret} aria-hidden="true" />
-                          ) : null}
-                        </>
-                      ) : (
-                        message.content
-                      )}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {chat.messages.length === 0 && suggestions.length > 0 ? (
-            <div className={styles.suggestions}>
-              <p className={styles.suggestionsLabel}>{t('suggestionsLabel')}</p>
-              <ul className={styles.chips}>
-                {suggestions.map((question) => (
-                  <li className={styles.chipItem} key={question}>
-                    <button
-                      className={styles.chip}
-                      type="button"
-                      onClick={() => send(question)}
-                      disabled={streaming}
-                    >
-                      {question}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
         </div>
       </div>
 
@@ -129,6 +140,7 @@ export function ChatPanel() {
         </label>
         <input
           className={styles.input}
+          ref={inputRef}
           id="chat-input"
           name="question"
           type="text"

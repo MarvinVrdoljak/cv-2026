@@ -14,8 +14,24 @@
   transition: grid-template-rows var(--duration-base) var(--ease-entrance);
 }
 
-.root:focus-within .collapsible {
+.root:focus-within .collapsible,
+.root[data-open='true'] .collapsible {
   grid-template-rows: 1fr;
+}
+
+/* The animated row's own box, deliberately without padding: padding cannot
+   shrink, so a padded grid item left the folded bar 16px tall and the fold
+   started from a step instead of from nothing. The padding lives one level in. */
+.track {
+  min-height: 0;
+
+  /* Hidden while folded, or a scrollbar shows through the collapsed row */
+  overflow: hidden;
+}
+
+.root:focus-within .track,
+.root[data-open='true'] .track {
+  overflow-y: auto;
 }
 
 .inner {
@@ -24,13 +40,6 @@
   gap: var(--spacing-12);
   min-height: 0;
   padding: var(--spacing-16) var(--spacing-20) 0;
-
-  /* Hidden while folded, or a scrollbar shows through the collapsed row */
-  overflow: hidden;
-}
-
-.root:focus-within .inner {
-  overflow-y: auto;
 }
 
 .head {
@@ -191,7 +200,10 @@
   flex: none;
   align-items: center;
   gap: var(--spacing-8);
-  padding: var(--spacing-12) var(--spacing-20);
+
+  /* A known height, so the document below can reserve exactly this much */
+  height: var(--chat-bar);
+  padding: 0 var(--spacing-20);
   border-top: 1px solid var(--color-rule);
 }
 
@@ -244,6 +256,7 @@
     grid-template-rows: 1fr;
   }
 
+  .track,
   .inner {
     height: 100%;
   }

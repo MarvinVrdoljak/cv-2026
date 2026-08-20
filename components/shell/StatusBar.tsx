@@ -1,5 +1,6 @@
 import {getTranslations} from 'next-intl/server'
-import {PrintButton} from './PrintButton'
+import type {Locale} from '@/i18n/routing'
+import {PdfLink} from './PdfLink'
 import {StatusReadouts} from './StatusReadouts'
 import styles from './StatusBar.module.css'
 
@@ -8,7 +9,11 @@ import styles from './StatusBar.module.css'
  * (StatusReadouts, client); the marks count comes from the `marks` CSS counter
  * so it still works with JavaScript switched off.
  */
-export async function StatusBar() {
+type StatusBarProps = {
+  locale: Locale
+}
+
+export async function StatusBar({locale}: StatusBarProps) {
   const t = await getTranslations('status')
 
   return (
@@ -21,14 +26,18 @@ export async function StatusBar() {
             The count comes from generated content, which assistive tech does
             not read reliably, so this readout is hidden from it. Each entry's
             own checkbox announces its state.
+
+            `data-marks-readout` lets AppShell reveal this only once something
+            is actually marked — a readout of nothing is not a measurement.
+            Same `:has()` rule as the notes tray, so it needs no JavaScript.
           */}
-          <div className={styles.readout} aria-hidden="true">
+          <div className={styles.readout} data-marks-readout aria-hidden="true">
             <dt className={styles.key}>{t('marks')}</dt>
             <dd className={styles.counter} />
           </div>
         </dl>
 
-        <PrintButton />
+        <PdfLink locale={locale} />
       </div>
     </footer>
   )

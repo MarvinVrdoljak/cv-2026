@@ -30,7 +30,9 @@ export async function CvDocument({locale}: CvDocumentProps) {
     <div className={styles.root}>
       <CvIdentity locale={locale} />
 
-      <p className={styles.hint}>{t('markHint')}</p>
+      <p className={styles.hint} data-print="hide">
+        {t('markHint')}
+      </p>
 
       <form className={styles.form} id={MARK_FORM_ID}>
         <CvSection section="profile" title={sections('profile')} index={1}>

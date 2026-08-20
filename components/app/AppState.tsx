@@ -43,7 +43,7 @@ type AppStateValue = {
   focusEntry: (id: string) => void
 
   matching: MatchingState
-  runMatching: (advert: string) => void
+  runMatching: (input: string, source?: 'text' | 'url') => void
   resetMatching: () => void
 
   chat: {state: StreamState; messages: ChatMessage[]}
@@ -140,6 +140,8 @@ export function AppState({locale, children}: AppStateProps) {
         if (err.code === 'not_configured') return t('not_configured')
         if (err.code === 'rate_limited') return t('rate_limited')
         if (err.code === 'too_long') return t('too_long')
+        if (err.code === 'invalid_url') return t('invalid_url')
+        if (err.code === 'fetch_failed') return t('fetch_failed')
       }
       return t('generic')
     },
@@ -206,8 +208,8 @@ export function AppState({locale, children}: AppStateProps) {
   }, [])
 
   const runMatching = useCallback(
-    (advert: string) => {
-      const trimmed = advert.trim()
+    (input: string, source: 'text' | 'url' = 'text') => {
+      const trimmed = input.trim()
       if (!trimmed) return
 
       matchAbort.current?.abort()
@@ -216,12 +218,22 @@ export function AppState({locale, children}: AppStateProps) {
       clearExperienceOrder()
 
       setError(null)
-      setMatching({state: 'streaming', findings: [], order: [], rejected: null, advert: trimmed})
+      // For a URL the real ad text isn't known yet — it arrives on the stream's
+      // first `advert` line and fills in below.
+      setMatching({
+        state: 'streaming',
+        findings: [],
+        order: [],
+        rejected: null,
+        advert: source === 'url' ? '' : trimmed,
+      })
       setStatus((s) => ({...s, state: 'streaming'}))
       const started = performance.now()
 
       streamAssistant(
-        {mode: 'matching', locale, advert: trimmed},
+        source === 'url'
+          ? {mode: 'matching', locale, url: trimmed}
+          : {mode: 'matching', locale, advert: trimmed},
         {
           signal: controller.signal,
           onDelta: (full) => {
@@ -232,6 +244,8 @@ export function AppState({locale, children}: AppStateProps) {
             )?.ids
             const reject = lines.find((l) => l.type === 'reject') as
               Extract<MatchLine, {type: 'reject'}> | undefined
+            const advertLine = lines.find((l) => l.type === 'advert') as
+              Extract<MatchLine, {type: 'advert'}> | undefined
             const findings = lines
               .filter((l): l is Extract<MatchLine, {type: 'finding'}> => l.type === 'finding')
               .map((l) => ({
@@ -247,6 +261,7 @@ export function AppState({locale, children}: AppStateProps) {
               findings,
               order: order ?? m.order,
               rejected: reject?.text ?? null,
+              advert: advertLine?.text ?? m.advert,
             }))
           },
         }

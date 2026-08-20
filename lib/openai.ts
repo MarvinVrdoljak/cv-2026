@@ -1,7 +1,14 @@
 import OpenAI from 'openai'
 
-/** Model is env-configurable; the default is a fast, inexpensive chat model. */
-export const MODEL = process.env.OPENAI_MODEL ?? 'gpt-4o-mini'
+/**
+ * Model selection. `OPENAI_MODEL` always wins, so any environment can pin a
+ * specific model. Without it, the default follows the environment: production
+ * gets `gpt-4o` — its stronger paraphrase reasoning is what keeps the matching
+ * honest without turning cautious — while development stays on the fast, cheap
+ * `gpt-4o-mini` for zero-cost iteration.
+ */
+export const MODEL =
+  process.env.OPENAI_MODEL ?? (process.env.NODE_ENV === 'production' ? 'gpt-4o' : 'gpt-4o-mini')
 
 let client: OpenAI | null = null
 

@@ -20,10 +20,14 @@ export const LIMITS = {
   perDay: 40,
 } as const
 
-/** Advert stays generous (a job ad is long); chat/question is tight. */
+/** Advert stays generous (a full job ad, or a whole fetched page, is long);
+    chat/question is tight. */
 export const MAX_LENGTH = {
-  advert: 6000,
+  advert: 10000,
   question: 500,
+  /** The assessment the client sends back to be typeset — the model is capped
+      at 700 tokens, so anything beyond this is not something we wrote. */
+  assessment: 4000,
 } as const
 
 function today(now: number): string {
@@ -69,4 +73,34 @@ export function checkRateLimit(sessionId: string, now = Date.now()): RateVerdict
   bucket.dayCount += 1
   buckets.set(sessionId, bucket)
   return {ok: true}
+}
+
+/**
+ * Rendering a PDF costs no API budget but does cost CPU, so it gets its own
+ * bucket: a session may pull a document as often as is plausible for a person
+ * clicking a button, and no more. Deliberately not the bucket above — a
+ * download must never eat into the day's model calls.
+ */
+const renders = new Map<string, {windowStart: number; count: number}>()
+
+export const RENDER_LIMITS = {
+  windowMs: 60_000,
+  perWindow: 12,
+} as const
+
+export function checkRenderLimit(sessionId: string, now = Date.now()): boolean {
+  const bucket = renders.get(sessionId) ?? {windowStart: now, count: 0}
+
+  if (now - bucket.windowStart >= RENDER_LIMITS.windowMs) {
+    bucket.windowStart = now
+    bucket.count = 0
+  }
+  if (bucket.count >= RENDER_LIMITS.perWindow) {
+    renders.set(sessionId, bucket)
+    return false
+  }
+
+  bucket.count += 1
+  renders.set(sessionId, bucket)
+  return true
 }

@@ -28,9 +28,12 @@
   overflow: hidden;
 }
 
+/* Centred, not baseline-aligned: the value is itself a flex row whose first
+   child is the indicator square, and a flex box takes its baseline from that
+   first child — so the label and the value sat on two different lines. */
 .readout {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--spacing-6);
   white-space: nowrap;
 }
@@ -59,16 +62,22 @@
   color: var(--color-text);
 }
 
-/* A hollow square at rest; the accent fills it only while streaming */
+/* A small solid square that is dim at rest and takes the accent while
+   streaming — an indicator lit or unlit, nothing more.
+
+   It used to be an outlined box, which read as an icon that had failed to
+   load; a hairline was no better, because the readouts next to it use an em
+   dash for "no value", so a line here read as a missing value rather than as a
+   state. Solid is unambiguous, and the size never changes, so nothing shifts. */
 .dot {
-  width: 6px;
-  height: 6px;
-  box-shadow: inset 0 0 0 1px var(--color-border-control);
+  width: 5px;
+  height: 5px;
+  background: var(--color-rule-strong);
+  transition: background var(--duration-fast) var(--ease-standard);
 }
 
 .value[data-state='streaming'] .dot {
   background: var(--color-accent);
-  box-shadow: none;
   animation: pulse 1s var(--ease-standard) infinite;
 }
 

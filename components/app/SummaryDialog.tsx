@@ -1,7 +1,7 @@
 'use client'
 
 import {useEffect, useRef, useState} from 'react'
-import {useTranslations} from 'next-intl'
+import {useLocale, useTranslations} from 'next-intl'
 import {useAppState} from './AppState'
 import {RefText} from './RefText'
 import styles from './SummaryDialog.module.css'
@@ -15,11 +15,17 @@ function labelFor(id: string): string {
 
 /**
  * The notes summary: the marked entries plus a short, streamed assessment.
- * Output is offered as copyable text and as a print view — no email, no form,
- * no data capture, exactly as the brief requires.
+ * Output is offered as copyable text and as a typeset PDF — no email, no
+ * form, no data capture, exactly as the brief requires.
+ *
+ * Two paths lead to paper, and neither needs the other: the button opens the
+ * typeset document from `/api/pdf` in a new tab, while `data-summary-print`
+ * (set for as long as the dialog is open) makes a plain Ctrl+P print this
+ * summary alone — so paper stays reachable even with JavaScript half-dead.
  */
 export function SummaryDialog() {
   const t = useTranslations('notes')
+  const locale = useLocale()
   const {summary, closeSummary} = useAppState()
   const [copied, setCopied] = useState(false)
   const closeRef = useRef<HTMLButtonElement>(null)
@@ -39,6 +45,15 @@ export function SummaryDialog() {
     return () => window.removeEventListener('keydown', onKey)
   }, [summary.open, closeSummary])
 
+  // While the dialog is open, the print stylesheet treats the summary as the
+  // whole page — so Ctrl+P prints the note, not the instrument behind it.
+  useEffect(() => {
+    if (!summary.open) return
+    const root = document.documentElement
+    root.setAttribute('data-summary-print', 'true')
+    return () => root.removeAttribute('data-summary-print')
+  }, [summary.open])
+
   if (!summary.open) return null
 
   const labels = summary.ids.map((id) => ({id, label: labelFor(id)}))
@@ -53,16 +68,45 @@ export function SummaryDialog() {
     }
   }
 
-  function print() {
-    const root = document.documentElement
-    root.setAttribute('data-summary-print', 'true')
-    const clear = () => root.removeAttribute('data-summary-print')
-    window.addEventListener('afterprint', clear, {once: true})
-    window.print()
+  /**
+   * Opens the typeset summary in a new tab.
+   *
+   * A form submission rather than `fetch`, because that makes it a real
+   * navigation: the tab lands on `/api/pdf`, the same kind of address the CV
+   * link in the status bar produces, and the browser's viewer gets the
+   * filename the server sent. A fetched document could only be shown as a
+   * `blob:` url, with the file name lost and the object url to clean up.
+   *
+   * It has to be a POST: the marked ids and the streamed assessment live only
+   * here, and neither belongs in a url (length, history, server logs).
+   */
+  function openPdf() {
+    const form = document.createElement('form')
+    form.method = 'POST'
+    form.action = '/api/pdf'
+    form.target = '_blank'
+
+    const field = (name: string, value: string) => {
+      const input = document.createElement('input')
+      input.type = 'hidden'
+      input.name = name
+      input.value = value
+      form.append(input)
+    }
+
+    field('locale', locale)
+    field('assessment', summary.text)
+    // One field per id, so the server reads them with `getAll`.
+    summary.ids.forEach((id) => field('markedIds', id))
+
+    // In the document, not detached: a detached form does not submit.
+    document.body.append(form)
+    form.submit()
+    form.remove()
   }
 
   return (
-    <div className={styles.backdrop} onMouseDown={closeSummary}>
+    <div className={styles.backdrop} onMouseDown={closeSummary} data-print="overlay">
       <div
         className={styles.dialog}
         role="dialog"
@@ -123,10 +167,10 @@ export function SummaryDialog() {
           <button
             className={`${styles.action} button button-quiet`}
             type="button"
-            onClick={print}
+            onClick={openPdf}
             disabled={summary.state !== 'done'}
           >
-            {t('print')}
+            {t('pdf')}
           </button>
         </div>
       </div>

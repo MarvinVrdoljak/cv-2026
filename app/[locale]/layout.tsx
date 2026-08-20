@@ -1,6 +1,7 @@
 import '@/styles/globals.css'
 
 import React from 'react'
+import {headers} from 'next/headers'
 import {notFound} from 'next/navigation'
 import {NextIntlClientProvider, hasLocale} from 'next-intl'
 import {getTranslations, setRequestLocale} from 'next-intl/server'
@@ -56,6 +57,23 @@ export async function generateMetadata({params}: Omit<LocaleLayoutProps, 'childr
     },
     description: t('description'),
 
+    // A personal CV is not for the open index. This emits
+    // `<meta name="robots" content="noindex, nofollow, ...">` — the binding
+    // signal that keeps the page out of search results even if a crawler
+    // ignores robots.txt. `nocache`/`noarchive` also stop cached snapshots.
+    robots: {
+      index: false,
+      follow: false,
+      nocache: true,
+      googleBot: {
+        index: false,
+        follow: false,
+        noarchive: true,
+        'max-snippet': 0,
+        'max-image-preview': 'none',
+      },
+    },
+
     // Raster baseline: works everywhere and without JS. The theme-aware SVG is
     // added on top by FaviconTheme — see the note there.
     icons: {
@@ -75,6 +93,10 @@ export default async function LocaleLayout({children, params}: LocaleLayoutProps
   // Enables static rendering for this locale.
   setRequestLocale(locale)
 
+  // The middleware minted a per-request nonce; the one inline script we own
+  // must carry it so the strict production CSP lets it run.
+  const nonce = (await headers()).get('x-nonce') ?? undefined
+
   return (
     // suppressHydrationWarning: the inline script below stamps data-js on <html>
     // before hydration, so the server markup and client attributes differ by
@@ -88,6 +110,7 @@ export default async function LocaleLayout({children, params}: LocaleLayoutProps
         {/* Flag JS before first paint so the preloader shows only with JS on
             (no-JS keeps the CV readable, never a stuck overlay). */}
         <script
+          nonce={nonce}
           dangerouslySetInnerHTML={{__html: "document.documentElement.setAttribute('data-js','1')"}}
         />
         <FaviconTheme />

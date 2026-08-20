@@ -4,6 +4,7 @@ import {routing, type Locale} from '@/i18n/routing'
 import {getOpenAI, MODEL, mockEnabled} from '@/lib/openai'
 import {mockScript} from '@/lib/mockStream'
 import {checkRateLimit, MAX_LENGTH} from '@/lib/rateLimit'
+import {fetchAdvert, AdvertError} from '@/lib/fetchAdvert'
 import {matchingSystemPrompt, chatSystemPrompt, summarySystemPrompt} from '@/lib/prompts'
 import {collectValidIds} from '@/lib/cvContext'
 import type {AssistantMode, ChatMessage} from '@/lib/types'
@@ -22,6 +23,7 @@ type Payload = {
   mode?: AssistantMode
   locale?: string
   advert?: string
+  url?: string
   question?: string
   history?: ChatMessage[]
   markedIds?: string[]
@@ -58,11 +60,26 @@ export async function POST(request: Request) {
   // Build the model messages per mode, validating input length as we go.
   let system: string
   const messages: {role: 'system' | 'user' | 'assistant'; content: string}[] = []
+  // Set only when the ad came from a URL: the extracted text is echoed to the
+  // client as the stream's first line so its chat context and restore work.
+  let advertEcho: string | null = null
 
   if (mode === 'matching') {
-    const advert = (body.advert ?? '').trim()
-    if (!advert) return jsonError('bad_request', 400)
-    if (advert.length > MAX_LENGTH.advert) return jsonError('too_long', 413)
+    const url = (body.url ?? '').trim()
+    let advert: string
+    if (url) {
+      try {
+        advert = await fetchAdvert(url)
+      } catch (err) {
+        const code = err instanceof AdvertError ? err.code : 'fetch_failed'
+        return jsonError(code, code === 'invalid_url' ? 400 : 502)
+      }
+      advertEcho = advert
+    } else {
+      advert = (body.advert ?? '').trim()
+      if (!advert) return jsonError('bad_request', 400)
+      if (advert.length > MAX_LENGTH.advert) return jsonError('too_long', 413)
+    }
     system = matchingSystemPrompt(locale)
     messages.push({role: 'system', content: system})
     messages.push({role: 'user', content: advert})
@@ -110,6 +127,11 @@ export async function POST(request: Request) {
     const stream = new ReadableStream<Uint8Array>({
       async start(controller) {
         const encoder = new TextEncoder()
+        if (advertEcho) {
+          controller.enqueue(
+            encoder.encode(JSON.stringify({type: 'advert', text: advertEcho}) + '\n')
+          )
+        }
         for (const line of lines) {
           // Matching is line-delimited NDJSON; chat/summary is plain prose.
           controller.enqueue(encoder.encode(mode === 'matching' ? line + '\n' : line))
@@ -140,6 +162,13 @@ export async function POST(request: Request) {
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       const encoder = new TextEncoder()
+      // URL-sourced ad: hand the extracted text to the client first, as one
+      // NDJSON line, before the model's findings begin.
+      if (advertEcho) {
+        controller.enqueue(
+          encoder.encode(JSON.stringify({type: 'advert', text: advertEcho}) + '\n')
+        )
+      }
       try {
         for await (const chunk of completion) {
           const delta = chunk.choices[0]?.delta?.content

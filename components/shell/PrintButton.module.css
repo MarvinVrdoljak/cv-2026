@@ -1,0 +1,13 @@
+.root {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.root:hover {
+  color: var(--color-text);
+}

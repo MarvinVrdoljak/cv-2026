@@ -1,0 +1,106 @@
+.root {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-24);
+  margin-top: var(--spacing-24);
+  padding-top: var(--spacing-20);
+  border-top: 1px solid var(--color-rule);
+}
+
+.bucket {
+  min-width: 0;
+}
+
+.bucketTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  margin: 0 0 var(--spacing-12);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-mono);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+/* A small square keyed to each bucket — the only colour distinction between them */
+.bucketMark {
+  width: 7px;
+  height: 7px;
+  flex: none;
+}
+
+.bucket[data-bucket='fit'] .bucketMark {
+  background: var(--color-accent);
+}
+
+.bucket[data-bucket='partial'] .bucketMark {
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+.bucket[data-bucket='gap'] .bucketMark {
+  box-shadow: inset 0 0 0 1px var(--color-border-control);
+}
+
+.bucketCount {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.finding {
+  padding: var(--spacing-8) 0;
+  border-top: 1px solid var(--color-rule);
+  cursor: default;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.finding:hover {
+  color: var(--color-accent);
+}
+
+.findingText {
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: inherit;
+}
+
+.refs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-4);
+  margin-left: var(--spacing-8);
+  vertical-align: baseline;
+}
+
+.bucketEmpty {
+  margin: 0;
+  padding: var(--spacing-8) 0;
+  border-top: 1px solid var(--color-rule);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.rejected {
+  margin-top: var(--spacing-20);
+  padding-top: var(--spacing-16);
+  border-top: 1px solid var(--color-rule);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+@media (--bp-medium-up) {
+  .root {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

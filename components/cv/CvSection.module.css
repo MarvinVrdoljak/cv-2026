@@ -1,0 +1,36 @@
+.root {
+  padding-top: var(--block-spacing-sm);
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-10);
+  padding-bottom: var(--spacing-8);
+  border-bottom: 1px solid var(--color-rule-strong);
+}
+
+/* The running section number, leading the heading like a chapter mark */
+.index {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-mono);
+  color: var(--color-text-muted);
+}
+
+/* Overrides the base h2 size: this is a label, not a headline */
+.title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-mono);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.body {
+  padding-top: var(--spacing-24);
+}

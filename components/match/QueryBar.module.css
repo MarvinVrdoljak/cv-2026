@@ -1,0 +1,92 @@
+.root {
+  padding: var(--spacing-20) 0 var(--spacing-16);
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-10);
+  padding-bottom: var(--spacing-10);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.limit {
+  margin: 0 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.field {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-12);
+}
+
+/* One line at rest, six once it has focus — the only thing the CV yields to */
+.input {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: var(--spacing-10) var(--spacing-12);
+  border: none;
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px var(--color-border-control);
+  background: var(--color-background);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  resize: none;
+  field-sizing: content;
+  transition:
+    min-height var(--duration-base) var(--ease-entrance),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.input:focus {
+  min-height: 132px;
+  box-shadow: inset 0 0 0 1px var(--color-text);
+  outline: none;
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.actions {
+  display: flex;
+  flex: none;
+  gap: var(--spacing-8);
+}
+
+.submit {
+  flex: none;
+  height: 40px;
+}
+
+.reset {
+  flex: none;
+  height: 40px;
+}
+
+.hint {
+  margin: var(--spacing-10) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}

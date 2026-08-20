@@ -1,0 +1,35 @@
+.root {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  margin: 0;
+}
+
+/* The rail tick — the only visible trace of the grid inside the document */
+.tick {
+  display: none;
+  width: var(--spacing-12);
+  height: 1px;
+  background: var(--color-rule-strong);
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+
+.id {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+@media (--bp-medium-up) {
+  .root {
+    justify-content: flex-start;
+    padding-top: var(--spacing-4);
+  }
+
+  .tick {
+    display: block;
+  }
+}

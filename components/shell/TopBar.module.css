@@ -1,0 +1,137 @@
+.root {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 30;
+  height: var(--chrome-top);
+  border-bottom: 1px solid var(--color-rule-strong);
+  background: var(--color-background);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-20);
+  width: 100%;
+  max-width: var(--frame-max);
+  height: 100%;
+  margin-inline: auto;
+  padding-inline: var(--spacing-20);
+}
+
+.identity {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-10);
+  margin: 0;
+  min-width: 0;
+}
+
+.identityLabel {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.identityName {
+  overflow: hidden;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-display);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Anchors work without JavaScript; smooth scroll and scroll-padding are in base */
+.nav {
+  display: none;
+}
+
+.navList {
+  display: flex;
+  gap: var(--spacing-16);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navItem {
+  margin: 0;
+}
+
+.navLink {
+  display: block;
+  padding-block: var(--spacing-4);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--color-text-muted);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.navLink:hover {
+  color: var(--color-text);
+}
+
+.locales {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+
+.localeLabel {
+  display: none;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.localeLink {
+  padding: var(--spacing-2) var(--spacing-6);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--color-text-muted);
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    background var(--duration-fast) var(--ease-standard);
+}
+
+.localeLink:hover {
+  color: var(--color-text);
+}
+
+/* The one place a link is allowed to hold the accent: it marks current state */
+.localeLink[aria-current='true'] {
+  background: var(--color-accent-wash);
+  color: var(--color-accent);
+}
+
+@media (--bp-medium-up) {
+  .inner {
+    padding-inline: var(--spacing-32);
+  }
+
+  .localeLabel {
+    display: block;
+  }
+}
+
+@media (--bp-large-up) {
+  .nav {
+    display: block;
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "title": "My Site",
+    "description": "Starter template with next-intl and token-based CSS."
+  },
+  "general": {
+    "home": "Home",
+    "loading": "Loading …"
+  },
+  "home": {
+    "title": "Welcome",
+    "intro": "This is the home page."
+  }
+}

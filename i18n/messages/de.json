@@ -1,0 +1,114 @@
+{
+  "meta": {
+    "title": "Marvin Vrdoljak — Lebenslauf",
+    "description": "Interaktiver Lebenslauf: Stellenanzeige einfügen und den Abgleich lesen, nachfragen, Stellen markieren."
+  },
+  "general": {
+    "home": "Startseite",
+    "loading": "Laden …"
+  },
+  "shell": {
+    "skipToDocument": "Zum Lebenslauf springen",
+    "skipToChat": "Zu den Fragen springen",
+    "documentLabel": "Lebenslauf",
+    "identity": "Lebenslauf",
+    "sectionsLabel": "Abschnitte",
+    "localeLabel": "Sprache",
+    "print": "Drucken"
+  },
+  "sections": {
+    "profile": "Kurzprofil",
+    "experience": "Berufserfahrung",
+    "skills": "Kenntnisse",
+    "education": "Ausbildung",
+    "languages": "Sprachen"
+  },
+  "cv": {
+    "present": "heute",
+    "durationYears": "{years} J.",
+    "durationMonths": "{months} M.",
+    "durationYearsMonths": "{years} J. {months} M.",
+    "stackLabel": "Eingesetzt",
+    "contactLabel": "Kontakt",
+    "entryLabel": "Eintrag",
+    "mark": "Markieren",
+    "marked": "Markiert",
+    "markHint": "Markierte Stellen sammeln sich unten in der Leiste."
+  },
+  "match": {
+    "label": "Stellenanzeige",
+    "hint": "Text einfügen — der Abgleich erscheint über dem Lebenslauf und sortiert ihn um.",
+    "placeholder": "Stellenanzeige hier einfügen …",
+    "submit": "Abgleichen",
+    "analysing": "Analysiere …",
+    "reset": "Zurücksetzen",
+    "limit": "max. 6000 Zeichen",
+    "resultFit": "Was passt",
+    "resultPartial": "Was teilweise passt",
+    "resultGap": "Was fehlt",
+    "empty": "Noch kein Abgleich."
+  },
+  "chat": {
+    "title": "Fragen",
+    "hint": "Antworten stützen sich ausschließlich auf diesen Lebenslauf.",
+    "empty": "Noch keine Frage gestellt.",
+    "you": "Frage",
+    "answerLabel": "Antwort",
+    "clear": "Leeren",
+    "suggestionsLabel": "Vorgeschlagene Fragen",
+    "suggestionsMatched": ["Wie gut passt das Profil zur Anzeige?", "Was fehlt für diese Stelle?"],
+    "suggestions": {
+      "profile": [
+        "Wie verbinden sich hier Design und Entwicklung?",
+        "Was zeichnet das Profil aus?"
+      ],
+      "experience": [
+        "Wie tief geht die Erfahrung mit React und mobilen Apps?",
+        "Wie wird KI in der Entwicklung eingesetzt?"
+      ],
+      "skills": [
+        "Wie belastbar sind die KI-Kenntnisse?",
+        "Welche Belege gibt es für Barrierefreiheit?"
+      ],
+      "education": [
+        "Wie hängen Ausbildung und heutige Rolle zusammen?",
+        "Welche Zertifikate liegen vor?"
+      ],
+      "languages": ["Auf welchem Niveau ist das Englisch?"]
+    },
+    "inputLabel": "Frage zum Lebenslauf",
+    "placeholder": "Frage stellen …",
+    "send": "Senden",
+    "streamLabel": "Antwort"
+  },
+  "notes": {
+    "label": "Mitschrift",
+    "summary": "Zusammenfassung erzeugen",
+    "generating": "Erzeuge …",
+    "reset": "Markierungen löschen",
+    "summaryTitle": "Zusammenfassung",
+    "markedLabel": "Markierte Einträge",
+    "assessmentLabel": "Einordnung",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "print": "Drucken",
+    "close": "Schließen"
+  },
+  "status": {
+    "label": "Systemstatus",
+    "state": "Status",
+    "ready": "bereit",
+    "streaming": "streamt",
+    "model": "Modell",
+    "latency": "Antwortzeit",
+    "marks": "Markierungen",
+    "pending": "—"
+  },
+  "errors": {
+    "not_configured": "Die KI-Funktionen sind nicht konfiguriert (kein API-Schlüssel).",
+    "rate_limited": "Zu viele Anfragen. Bitte kurz warten.",
+    "too_long": "Die Eingabe ist zu lang.",
+    "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
+    "dismiss": "Schließen"
+  }
+}

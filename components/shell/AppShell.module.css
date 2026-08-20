@@ -1,0 +1,103 @@
+.root {
+  counter-reset: marks 0;
+  min-height: 100vh;
+  background: var(--color-background);
+}
+
+/* Visible the moment it takes focus, invisible otherwise */
+.skip {
+  position: fixed;
+  top: var(--spacing-8);
+  left: var(--spacing-8);
+  z-index: 40;
+  padding: var(--spacing-8) var(--spacing-12);
+  background: var(--color-text);
+  color: var(--color-background);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.skip:focus-visible {
+  transform: translateY(0);
+}
+
+.frame {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  max-width: var(--frame-max);
+  margin-inline: auto;
+  padding-top: var(--chrome-top);
+
+  /* padding-bottom (room for mobile chat bar + tray + status bar) disabled */
+}
+
+.document {
+  min-width: 0;
+  padding-inline: var(--spacing-20);
+}
+
+.panel {
+  /* Mobile: a bar pinned above the chrome that opens on focus */
+  position: fixed;
+  right: 0;
+  bottom: calc(var(--chrome-bottom) + var(--tray-height));
+  left: 0;
+  z-index: 20;
+  border-top: 1px solid var(--color-rule-strong);
+  background: var(--color-surface);
+}
+
+/*
+   Marked entries exist → the tray rises into view. The reveal depends on
+   state inside the document, so it is expressed with a data attribute
+   rather than a class: no module can see another module's class names. */
+.tray {
+  position: fixed;
+  right: 0;
+  bottom: var(--chrome-bottom);
+  left: 0;
+  z-index: 25;
+  height: var(--tray-height);
+  border-top: 1px solid var(--color-rule);
+  background: var(--color-background);
+  transform: translateY(100%);
+  visibility: hidden;
+  transition:
+    transform var(--duration-base) var(--ease-entrance),
+    visibility var(--duration-base) var(--ease-standard);
+}
+
+.root:has([data-mark]:checked) .tray {
+  transform: translateY(0);
+  visibility: visible;
+}
+
+@media (--bp-medium-up) {
+  .document {
+    padding-inline: var(--spacing-32);
+  }
+}
+
+@media (--bp-large-up) {
+  .frame {
+    grid-template-columns: minmax(0, 1fr) var(--panel-width);
+
+    /* padding-bottom (large-screen variant) disabled */
+  }
+
+  .panel {
+    position: sticky;
+    inset: var(--chrome-top) auto auto auto;
+    z-index: 1;
+    height: calc(100vh - var(--chrome-top) - var(--chrome-bottom));
+    border-top: none;
+    border-left: 1px solid var(--color-rule-strong);
+    background: none;
+  }
+}

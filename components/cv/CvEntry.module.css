@@ -1,0 +1,168 @@
+.root {
+  padding: var(--spacing-20) 0;
+  border-top: 1px solid var(--color-rule);
+  transition:
+    background var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard);
+}
+
+/* Marked: a persistent accent rule down the entry's leading edge */
+.root:has([data-mark]:checked) {
+  box-shadow: inset 2px 0 0 0 var(--color-accent);
+}
+
+/* Cited by matching or chat: the leading edge widens once, then settles.
+   The wash never darkens enough to touch the text contrast. */
+.root[data-highlight='true'] {
+  background: var(--color-accent-wash);
+  box-shadow: inset 2px 0 0 0 var(--color-accent);
+  animation: flash var(--duration-slow) var(--ease-standard);
+}
+
+/* Mobile: identifier and mark control share one row above the entry */
+.gutter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-12);
+}
+
+.body {
+  min-width: 0;
+}
+
+.meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-12);
+  margin: 0 0 var(--spacing-8);
+}
+
+.period {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--spacing-6);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-mono);
+  color: var(--color-text);
+}
+
+.dash {
+  color: var(--color-text-muted);
+}
+
+.present {
+  font-family: var(--font-mono);
+  color: var(--color-text);
+}
+
+.duration {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+.role {
+  margin: 0;
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-heading);
+  line-height: var(--line-height-heading);
+  letter-spacing: var(--tracking-display);
+}
+
+.organisation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--spacing-6) var(--spacing-10);
+  margin: var(--spacing-4) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* Location follows the employer, set off by a middot */
+.location {
+  position: relative;
+  padding-left: var(--spacing-12);
+}
+
+.location::before {
+  position: absolute;
+  left: 0;
+  content: '·';
+}
+
+.summary {
+  margin: var(--spacing-12) 0 0;
+}
+
+.highlights {
+  margin: var(--spacing-12) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.highlight {
+  position: relative;
+  margin: 0 0 var(--spacing-6);
+  padding-left: var(--spacing-20);
+}
+
+/* A hairline instead of a bullet — the same line language as the rules */
+.highlight::before {
+  position: absolute;
+  top: 0.7em;
+  left: 0;
+  width: var(--spacing-10);
+  height: 1px;
+  background: var(--color-rule-strong);
+  content: '';
+}
+
+.stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-4) var(--spacing-8);
+  margin: var(--spacing-16) 0 0;
+}
+
+.stackLabel {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.stackItems {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text);
+}
+
+@keyframes flash {
+  from {
+    box-shadow: inset 6px 0 0 0 var(--color-accent);
+  }
+
+  to {
+    box-shadow: inset 2px 0 0 0 var(--color-accent);
+  }
+}
+
+@media (--bp-medium-up) {
+  .root {
+    padding: var(--spacing-24) 0;
+  }
+
+  /* Desktop: the margin holds the identifier and, under it, the control */
+  .gutter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-10);
+  }
+}

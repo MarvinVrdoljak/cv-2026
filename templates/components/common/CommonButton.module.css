@@ -1,0 +1,5 @@
+/* Base button look lives in the global `.button` atom (styles/components/button.css);
+   disabled state comes from utilities.css. Only component-specific extras here. */
+.label {
+  font-weight: var(--font-weight-bold);
+}

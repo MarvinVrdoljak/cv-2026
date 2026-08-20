@@ -1,0 +1,6 @@
+node_modules/
+.next/
+templates/
+
+# Original brief — kept verbatim, not reformatted.
+docs/build-prompt-cv-app.md

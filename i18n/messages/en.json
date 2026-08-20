@@ -1,0 +1,117 @@
+{
+  "meta": {
+    "title": "Marvin Vrdoljak — CV",
+    "description": "Interactive CV: paste a job ad to read the match, ask follow-up questions, mark what matters."
+  },
+  "general": {
+    "home": "Home",
+    "loading": "Loading …"
+  },
+  "shell": {
+    "skipToDocument": "Skip to CV",
+    "skipToChat": "Skip to questions",
+    "documentLabel": "CV",
+    "identity": "Curriculum Vitae",
+    "sectionsLabel": "Sections",
+    "localeLabel": "Language",
+    "print": "Print"
+  },
+  "sections": {
+    "profile": "Profile",
+    "experience": "Experience",
+    "skills": "Skills",
+    "education": "Education",
+    "languages": "Languages"
+  },
+  "cv": {
+    "present": "present",
+    "durationYears": "{years} yr",
+    "durationMonths": "{months} mo",
+    "durationYearsMonths": "{years} yr {months} mo",
+    "stackLabel": "Worked with",
+    "contactLabel": "Contact",
+    "entryLabel": "Entry",
+    "mark": "Mark",
+    "marked": "Marked",
+    "markHint": "Marked entries collect in the bar below."
+  },
+  "match": {
+    "label": "Job ad",
+    "hint": "Paste the text — the match appears above the CV and reorders it.",
+    "placeholder": "Paste the job ad here …",
+    "submit": "Match",
+    "analysing": "Analysing …",
+    "reset": "Reset",
+    "limit": "6000 characters max",
+    "resultFit": "What fits",
+    "resultPartial": "What partly fits",
+    "resultGap": "What is missing",
+    "empty": "No match yet."
+  },
+  "chat": {
+    "title": "Questions",
+    "hint": "Answers draw on this CV and nothing else.",
+    "empty": "No question asked yet.",
+    "you": "Question",
+    "answerLabel": "Answer",
+    "clear": "Clear",
+    "suggestionsLabel": "Suggested questions",
+    "suggestionsMatched": [
+      "How well does the profile fit the ad?",
+      "What is missing for this role?"
+    ],
+    "suggestions": {
+      "profile": [
+        "How do design and development connect here?",
+        "What stands out about this profile?"
+      ],
+      "experience": [
+        "How deep does the React and mobile-app experience go?",
+        "How is AI used in the development work?"
+      ],
+      "skills": [
+        "How solid is the AI experience?",
+        "What evidence is there for accessibility work?"
+      ],
+      "education": [
+        "How do the studies connect to the current role?",
+        "What certificates are there?"
+      ],
+      "languages": ["What level is the English at?"]
+    },
+    "inputLabel": "Question about this CV",
+    "placeholder": "Ask a question …",
+    "send": "Send",
+    "streamLabel": "Answer"
+  },
+  "notes": {
+    "label": "Notes",
+    "summary": "Generate summary",
+    "generating": "Generating …",
+    "reset": "Clear marks",
+    "summaryTitle": "Summary",
+    "markedLabel": "Marked entries",
+    "assessmentLabel": "Assessment",
+    "copy": "Copy",
+    "copied": "Copied",
+    "print": "Print",
+    "close": "Close"
+  },
+  "status": {
+    "label": "System status",
+    "state": "State",
+    "ready": "ready",
+    "streaming": "streaming",
+    "model": "Model",
+    "latency": "Latency",
+    "marks": "Marks",
+    "pending": "—"
+  },
+  "errors": {
+    "not_configured": "The AI features are not configured (no API key).",
+    "rate_limited": "Too many requests. Please wait a moment.",
+    "too_long": "The input is too long.",
+    "generic": "Something went wrong. Please try again.",
+    "dismiss": "Dismiss"
+  }
+}

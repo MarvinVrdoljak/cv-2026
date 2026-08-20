@@ -1,0 +1,73 @@
+/* ============================================================
+   Print — the CV is a document again. Interface disappears:
+   chrome, chat, matching input and marking controls are not printed.
+   Unlayered on purpose so it wins over CSS Modules.
+   ============================================================ */
+@media print {
+  :root {
+    --color-background: #fff;
+    --color-surface: #fff;
+    --color-surface-sunken: #fff;
+    --color-text: #000;
+    --color-text-muted: #333;
+    --color-rule: #bbb;
+    --color-rule-strong: #888;
+  }
+
+  [data-print='hide'] {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff;
+    font-size: 11pt;
+  }
+
+  /* Release the document from the app frame */
+  [data-print='document'] {
+    display: block !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Keep an entry and its heading together on one page */
+  [data-print='entry'] {
+    break-inside: avoid;
+  }
+
+  [data-print='section'] {
+    break-after: auto;
+    break-inside: auto;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  /* Resolve links so a printed CV stays usable */
+  [data-print='resolve-url']::after {
+    content: ' (' attr(href) ')';
+    font-size: 9pt;
+    word-break: break-all;
+  }
+
+  /* When the summary is being printed, it becomes the whole page: the CV
+     document and everything else step out, the dialog lays flat. */
+  :root[data-summary-print='true'] [data-print='document'] {
+    display: none !important;
+  }
+
+  :root[data-summary-print='true'] [data-print='summary'] {
+    position: static;
+    max-width: none;
+    max-height: none;
+    overflow: visible;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+  }
+}

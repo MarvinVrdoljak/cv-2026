@@ -1,0 +1,61 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+  cursor: pointer;
+}
+
+/* Styled, not replaced: still a checkbox, still counted, still focusable.
+   Never set display:none here — an unrendered element stops incrementing. */
+.input {
+  appearance: none;
+  flex: none;
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px var(--color-border-control);
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.input:checked {
+  counter-increment: marks;
+  background: var(--color-accent);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+/* The word appears on intent and stays once the state is set */
+.state {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-standard);
+}
+
+.root:hover .state,
+.root:focus-within .state {
+  opacity: 1;
+}
+
+.root:has(.input:checked) .state {
+  opacity: 1;
+  color: var(--color-accent);
+}
+
+.stateActive {
+  display: none;
+}
+
+.root:has(.input:checked) .stateIdle {
+  display: none;
+}
+
+.root:has(.input:checked) .stateActive {
+  display: inline;
+}

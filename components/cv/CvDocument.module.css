@@ -1,0 +1,22 @@
+.root {
+  padding-bottom: var(--block-spacing-md);
+}
+
+/* Mono because it is system text, but sentence case: a whole sentence set
+   in caps shouts, and nothing here is allowed to shout. */
+.hint {
+  margin: var(--spacing-24) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-mono);
+  color: var(--color-text-muted);
+}
+
+.form {
+  margin: 0;
+}
+
+.entries {
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,153 @@
+/* ============================================================
+   Design Tokens — single source of truth.
+   Write px everywhere; postcss-pxtorem converts to rem at build.
+
+   Palette rule: near-neutral paper, near-black ink, ONE accent.
+   The accent is reserved for active states (highlighted CV entries,
+   marked elements, streaming indicator). Never decorative.
+   ============================================================ */
+:root {
+  /* Colors */
+  --color-black: #000;
+  --color-white: #fff;
+  --color-background: #fbfaf8;
+  --color-surface: #f4f3ef;
+  --color-surface-sunken: #efeee9;
+  --color-text: #16161a;
+  --color-text-muted: #62626a;
+  --color-rule: #e3e1db;
+  --color-rule-strong: #c9c6be;
+
+  /* Boundary of an actual control (input, checkbox) — WCAG 1.4.11 needs 3:1,
+     which the decorative hairlines above deliberately do not reach. */
+  --color-border-control: #8c8c93;
+  --color-accent: #b0350f;
+  --color-accent-strong: #8b2709;
+  --color-accent-wash: #fbeae3;
+
+  /* Consumed by the global .button atom */
+  --color-primary: #16161a;
+  --color-primary-hover: #303038;
+  --color-on-primary: #fbfaf8;
+
+  /* Typography — fonts injected by next/font as CSS variables on <html>.
+     The sans/mono switch is the central device: sans is content,
+     mono is interface (labels, dates, counters, system readouts). */
+  --font-body: var(--font-sans, system-ui, sans-serif);
+  --font-heading: var(--font-sans, system-ui, sans-serif);
+  --font-mono: var(--font-plex-mono, ui-monospace, monospace);
+
+  /* Modular scale, ratio 1.2 from a 17px base. Fluid via clamp(). */
+  --font-size-xs: clamp(11px, 0.7rem + 0.05vw, 12px);
+  --font-size-sm: clamp(13px, 0.8rem + 0.1vw, 14px);
+  --font-size-base: clamp(16px, 0.98rem + 0.15vw, 17px);
+  --font-size-lg: clamp(19px, 1.15rem + 0.3vw, 21px);
+  --font-size-h1: clamp(30px, 1.8rem + 1.5vw, 44px);
+  --font-size-h2: clamp(22px, 1.35rem + 0.7vw, 27px);
+  --font-size-h3: clamp(19px, 1.15rem + 0.4vw, 22px);
+  --font-size-h4: clamp(17px, 1.05rem + 0.25vw, 19px);
+  --font-size-h5: clamp(16px, 0.98rem + 0.15vw, 17px);
+  --font-size-h6: clamp(14px, 0.85rem + 0.1vw, 15px);
+
+  --font-weight-body: 400;
+  --font-weight-medium: 500;
+  --font-weight-heading: 600;
+  --font-weight-bold: 600;
+  --line-height-base: 1.6;
+  --line-height-heading: 1.15;
+  --line-height-mono: 1.2;
+
+  /* Tracking — mono labels are set uppercase and need air */
+  --tracking-label: 0.09em;
+  --tracking-mono: 0.02em;
+  --tracking-display: -0.015em;
+
+  /* Measure — the CV column stays at 65–75 characters.
+     Note `1ch` is the width of "0", which is wider than the average glyph:
+     56ch measures out to ~70 characters of running text in IBM Plex Sans.
+     Verified by measuring rendered text, not by assuming 1ch = 1 character. */
+  --measure: 56ch;
+
+  /* Spacing (number = px value) */
+  --spacing-2: 2px;
+  --spacing-4: 4px;
+  --spacing-6: 6px;
+  --spacing-8: 8px;
+  --spacing-10: 10px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+  --spacing-48: 48px;
+  --spacing-64: 64px;
+  --spacing-100: 100px;
+
+  /* Radii — rectilinear by intent; hairlines, not cards */
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-full: 9999px;
+
+  /* Block spacing (vertical rhythm between page sections, responsive) */
+  --block-spacing-sm: 32px;
+  --block-spacing-md: 48px;
+  --block-spacing-lg: 64px;
+
+  /* Instrument chrome — fixed bars framing the document */
+  --chrome-top: 44px;
+  --chrome-bottom: 28px;
+  --tray-height: 44px;
+
+  /* Wide enough for the identifier and the mark control's mono label */
+  --gutter-id: 104px;
+  --panel-width: 366px;
+  --frame-max: 1512px;
+
+  /* Motion — short, functional, custom curves. Never a keyword easing. */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 250ms;
+  --ease-standard: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+@media (--bp-medium-up) {
+  :root {
+    --block-spacing-sm: 40px;
+    --block-spacing-md: 60px;
+    --block-spacing-lg: 84px;
+    --chrome-top: 48px;
+  }
+}
+
+@media (--bp-large-up) {
+  :root {
+    --block-spacing-sm: 44px;
+    --block-spacing-md: 68px;
+    --block-spacing-lg: 96px;
+  }
+}
+
+/* No toggle by design — the app follows the environment. Same relationships,
+   inverted ground: paper becomes ink, the accent lifts to stay legible. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #101013;
+    --color-surface: #17171b;
+    --color-surface-sunken: #1d1d22;
+    --color-text: #eceae5;
+    --color-text-muted: #9d9da6;
+    --color-rule: #26262c;
+    --color-rule-strong: #3a3a42;
+    --color-border-control: #74747d;
+    --color-accent: #ff7a4d;
+    --color-accent-strong: #ff9670;
+    --color-accent-wash: #2a1610;
+    --color-primary: #eceae5;
+    --color-primary-hover: #fff;
+    --color-on-primary: #101013;
+  }
+}

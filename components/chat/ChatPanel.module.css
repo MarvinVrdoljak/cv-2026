@@ -1,0 +1,245 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Mobile: everything above the input folds away until the panel has focus.
+   Animating grid-template-rows keeps it a real movement, not a jump. */
+.collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  min-height: 0;
+  overflow: hidden;
+  transition: grid-template-rows var(--duration-base) var(--ease-entrance);
+}
+
+.root:focus-within .collapsible {
+  grid-template-rows: 1fr;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-12);
+  min-height: 0;
+  padding: var(--spacing-16) var(--spacing-20) 0;
+
+  /* Hidden while folded, or a scrollbar shows through the collapsed row */
+  overflow: hidden;
+}
+
+.root:focus-within .inner {
+  overflow-y: auto;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-10);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-mono);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.clear {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.clear:hover {
+  color: var(--color-text);
+}
+
+.transcript {
+  flex: 1;
+  min-height: 0;
+  padding-top: var(--spacing-12);
+  overflow-y: auto;
+  border-top: 1px solid var(--color-rule);
+}
+
+.empty {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.role {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.body {
+  font-size: var(--font-size-sm);
+  line-height: 1.55;
+}
+
+/* The question recedes; the answer carries the accent-tinted rule */
+.message[data-role='assistant'] .body {
+  padding-left: var(--spacing-10);
+  border-left: 1px solid var(--color-accent);
+}
+
+/* Blinking block while the first token is still on its way */
+.caret {
+  display: inline-block;
+  width: 7px;
+  height: 1em;
+  background: var(--color-accent);
+  vertical-align: text-bottom;
+  animation: caret 1s steps(1) infinite;
+}
+
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+.suggestions {
+  padding-bottom: var(--spacing-16);
+}
+
+.suggestionsLabel {
+  margin: 0 0 var(--spacing-8);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chipItem {
+  display: flex;
+  max-width: 100%;
+}
+
+.chip {
+  padding: var(--spacing-6) var(--spacing-10);
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px var(--color-rule-strong);
+  font-size: var(--font-size-sm);
+  text-align: left;
+  color: var(--color-text-muted);
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.chip:hover {
+  box-shadow: inset 0 0 0 1px var(--color-text);
+  color: var(--color-text);
+}
+
+.form {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--spacing-8);
+  padding: var(--spacing-12) var(--spacing-20);
+  border-top: 1px solid var(--color-rule);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  padding: 0 var(--spacing-12);
+  border: none;
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px var(--color-border-control);
+  background: var(--color-background);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  transition: box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.input:focus {
+  box-shadow: inset 0 0 0 1px var(--color-text);
+  outline: none;
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.send {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.send:hover {
+  color: var(--color-text);
+}
+
+@media (--bp-large-up) {
+  /* Desktop: the column is always open and the transcript takes the height */
+  .collapsible {
+    flex: 1;
+    grid-template-rows: 1fr;
+  }
+
+  .inner {
+    height: 100%;
+  }
+}

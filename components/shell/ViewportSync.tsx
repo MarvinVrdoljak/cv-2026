@@ -33,9 +33,16 @@ export function ViewportSync() {
       if (!viewport) return
 
       // The gap between the bottom of the layout viewport and the bottom of
-      // what is visible: the keyboard, plus whatever iOS scrolled the page by
+      // what is visible: the keyboard (with Safari's form accessory bar and
+      // floating URL bar on top of it), plus whatever iOS scrolled the page by
       // to bring the focused field into view.
-      const covered = window.innerHeight - viewport.height - viewport.offsetTop
+      //
+      // clientHeight, NOT window.innerHeight: `position: fixed` is measured
+      // against the layout viewport, and that is what clientHeight reports.
+      // iOS's innerHeight is the *large* viewport — the height with the browser
+      // bars collapsed — so it overshot by exactly their height and left a
+      // strip of the document showing between the chat bar and the keyboard.
+      const covered = root.clientHeight - viewport.height - viewport.offsetTop
 
       root.style.setProperty('--keyboard-inset', `${Math.max(0, Math.round(covered))}px`)
       root.style.setProperty('--viewport-height', `${Math.round(viewport.height)}px`)

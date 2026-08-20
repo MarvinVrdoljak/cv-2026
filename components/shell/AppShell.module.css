@@ -82,6 +82,22 @@
   transition: bottom var(--duration-base) var(--ease-entrance);
 }
 
+/* Fills everything between the bar and the bottom of the page in the panel's
+   own surface, so no measurement can ever leave a strip of the document showing
+   through under the chat: what the keyboard does not cover reads as the bar's
+   base. It sits at the panel's z-index, below the status bar and the tray — at
+   rest (inset 0, so 28px tall) those paint over it and nothing changes. */
+.panel::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: max(var(--chrome-bottom), var(--keyboard-inset));
+  background: var(--color-surface);
+  pointer-events: none;
+}
+
 .root:has([data-mark]:checked) .panel {
   bottom: max(calc(var(--chrome-bottom) + var(--tray-height)), var(--keyboard-inset));
 }
@@ -138,6 +154,10 @@
 
   .root:has([data-mark]:checked) .frame {
     padding-bottom: calc(var(--tray-height) + var(--chrome-bottom));
+  }
+
+  .panel::after {
+    display: none;
   }
 
   .panel {

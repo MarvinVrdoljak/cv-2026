@@ -65,6 +65,13 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   Bildschirmtastatur darüber gleiten, weil das Layout-Viewport seine Höhe behält. Deshalb
   veröffentlicht [ViewportSync](components/shell/ViewportSync.tsx) das _visuelle_ Viewport als
   `--keyboard-inset` (verdeckter Rand) und `--viewport-height`, und das Chrome rechnet damit:
+  Bezugsgröße ist `documentElement.clientHeight`, **nicht** `window.innerHeight` — `fixed` misst
+  gegen das Layout-Viewport, iOS' `innerHeight` meldet aber das _große_ Viewport (Browser-Leisten
+  eingeklappt). Mit `innerHeight` war der Inset genau um deren Höhe zu groß und unter der
+  Chat-Leiste stand ein Streifen Dokument. Zusätzlich füllt `.panel::after` den Bereich zwischen
+  Leiste und Seitenunterkante in `--color-surface`: keine Messung kann dann noch Inhalt
+  durchscheinen lassen. Safaris Formular-Leiste (Pfeile + Häkchen über der Tastatur) ist vom Web
+  aus nicht abschaltbar — ihre Höhe steckt aber im Inset, die Leiste sitzt also darüber.
   `bottom: max(--chrome-bottom, --keyboard-inset)` (die Leiste reitet auf der Tastatur) und
   `max-height: calc(var(--viewport-height) - var(--chrome-top))` (das Panel wächst nie über den
   Schirm hinaus — sonst stand der neueste Absatz außerhalb). Ohne JS bleiben die Ruhewerte aus

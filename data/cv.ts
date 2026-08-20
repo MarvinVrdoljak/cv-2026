@@ -174,15 +174,7 @@ export const cv: Cv = {
           en: 'AI-assisted development day to day: large language models, prompt engineering and Claude Code as part of the workflow.',
         },
       ],
-      stack: [
-        'React',
-        'Next.js',
-        'TypeScript',
-        'Payload CMS',
-        'Three.js',
-        'WordPress',
-        'Figma (Software)',
-      ],
+      stack: ['React', 'Next.js', 'TypeScript', 'Payload CMS', 'Three.js', 'WordPress', 'Figma'],
     },
     {
       id: 'exp-02',
@@ -205,7 +197,7 @@ export const cv: Cv = {
           en: 'AI-assisted development woven through the whole workflow.',
         },
       ],
-      stack: ['React Native', 'Expo', 'Next.js', 'Supabase', 'TypeScript', 'Figma (Software)'],
+      stack: ['React Native', 'Expo', 'Next.js', 'Supabase', 'TypeScript', 'Figma'],
     },
     {
       id: 'exp-03',
@@ -316,7 +308,7 @@ export const cv: Cv = {
         'User Experience (UX)',
         'Konzeption',
         'Wireframing',
-        'Figma (Software)',
+        'Figma',
         'Digitale Barrierefreiheit',
       ],
       note: null,
@@ -332,8 +324,23 @@ export const cv: Cv = {
       label: {de: 'Datenbanken', en: 'Databases'},
       items: ['SQL', 'PostgreSQL', 'SQLite', 'MongoDB'],
       note: {
-        de: 'Kein Datenbank-Spezialist, aber das Aufsetzen und Bearbeiten von Datenbanken gelingt problemlos – gern KI-gestützt.',
-        en: 'No database specialist, but setting up and working with databases is no problem — often AI-assisted.',
+        de: 'Kein Datenbank-Spezialist, aber das Aufsetzen und Bearbeiten von Datenbanken gelingt problemlos.',
+        en: 'No database specialist, but setting up and working with databases is no problem.',
+      },
+    },
+    {
+      id: 'skl-07',
+      label: {de: 'Cloud & Betrieb', en: 'Cloud & operations'},
+      items: [
+        'Microsoft Azure',
+        'Amazon Web Services (AWS)',
+        'Google Cloud',
+        'Cloudflare',
+        'Expo Application Services (EAS)',
+      ],
+      note: {
+        de: 'Projektbezogen eingesetzt, solide im Anwendungsbetrieb – ohne Spezialisierung auf große Enterprise-Infrastruktur.',
+        en: 'Used on projects, solid at application-level operations — without specialising in large enterprise infrastructure.',
       },
     },
   ],
@@ -528,8 +535,8 @@ export const cv: Cv = {
         en: 'No line management experience so far. Technical guidance yes, team leadership no.',
       },
       {
-        de: 'Kein DevOps- oder Infrastruktur-Spezialist. CI/CD läuft in der Praxis über Vercel und EAS; AWS, Azure, Google Cloud und Cloudflare hat er projektbezogen eingesetzt – solide im Anwendungsbetrieb, aber ohne Spezialisierung auf große Enterprise-Infrastruktur.',
-        en: 'Not a DevOps or infrastructure specialist. CI/CD runs in practice through Vercel and EAS; has used AWS, Azure, Google Cloud and Cloudflare on projects – solid at application-level operations, but not specialised in large enterprise infrastructure.',
+        de: 'Kein DevOps- oder Infrastruktur-Spezialist. CI/CD läuft in der Praxis über Vercel und EAS; AWS, Microsoft Azure, Google Cloud und Cloudflare hat er projektbezogen eingesetzt – solide im Anwendungsbetrieb, aber ohne Spezialisierung auf große Enterprise-Infrastruktur.',
+        en: 'Not a DevOps or infrastructure specialist. CI/CD runs in practice through Vercel and EAS; has used AWS, Microsoft Azure, Google Cloud and Cloudflare on projects – solid at application-level operations, but not specialised in large enterprise infrastructure.',
       },
     ],
     extra: [

@@ -32,7 +32,14 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   ([lib/rateLimit.ts](lib/rateLimit.ts)), Längenbegrenzung je Modus.
 - **Systemprompts:** [lib/prompts.ts](lib/prompts.ts) — drei Prompts, alle mit demselben
   Vertrag: nur aus den CV-Daten, fehlende Info offen sagen, Einträge per id zitieren, knapp,
-  Prompt-Probing/Off-Topic trocken abweisen. Matching gibt **NDJSON** aus (eine `order`-Zeile
+  Prompt-Probing/Off-Topic trocken abweisen. Der Matching-Prompt trägt zwei Regeln, die aus
+  echten Fehlausgaben stammen und nicht wegoptimiert werden dürfen: **Pflichtprüfung vor jedem
+  „gap"** (kommt der Begriff irgendwo in den Daten vor — auch in `stack`, `items`, `note` oder
+  im about-Block inklusive `weaknesses` —, ist es höchstens „partial"), und **Menge je Bucket**
+  („fit" bleibt der Schwerpunkt mit 4–7 Punkten, „partial" und „gap" je mindestens zwei, aber
+  nie eine erfundene Lücke, nur um auf zwei zu kommen) mit einer Selbstprüfung vor der Ausgabe.
+  Deshalb steht `max_tokens` für `matching` höher als für die anderen Modi: eine abgeschnittene
+  Zeile ist ein Befund, den der Client stillschweigend verwirft. Matching gibt **NDJSON** aus (eine `order`-Zeile
   und je eine `finding`-Zeile, buckets fit/partial/gap), der Client parst zeilenweise beim
   Streamen. Chat/Zusammenfassung streamen Prosa mit `[id]`-Zitaten.
 - **Client-Zustand:** [components/app/AppState.tsx](components/app/AppState.tsx) — ein Provider

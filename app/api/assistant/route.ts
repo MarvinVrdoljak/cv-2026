@@ -153,7 +153,10 @@ export async function POST(request: Request) {
       messages,
       stream: true,
       temperature: mode === 'matching' ? 0.2 : 0.4,
-      max_tokens: mode === 'chat' ? 400 : 700,
+      // Matching needs the most room: the order line plus at least two
+      // findings in every bucket, and a line cut off mid-stream is a finding
+      // the client silently drops (it only parses complete lines).
+      max_tokens: mode === 'chat' ? 400 : mode === 'matching' ? 1200 : 700,
     })
   } catch {
     return jsonError('upstream', 502)

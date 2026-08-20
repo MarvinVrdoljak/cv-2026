@@ -1,5 +1,6 @@
 'use client'
 
+import {Fragment} from 'react'
 import {useTranslations} from 'next-intl'
 import type {MatchBucket, MatchFinding} from '@/lib/types'
 import {useAppState} from '@/components/app/AppState'
@@ -77,13 +78,15 @@ function Finding({
   return (
     <li className={styles.finding} onMouseEnter={onEnter} onMouseLeave={onLeave}>
       <span className={styles.findingText}>{finding.text}</span>
-      {finding.refs.length > 0 ? (
-        <span className={styles.refs}>
-          {finding.refs.map((id) => (
-            <EntryRef key={id} id={id} />
-          ))}
-        </span>
-      ) : null}
+      {/* Chips flow inline after the text and wrap one at a time. The real
+          space before each is the break opportunity; no flex wrapper, which
+          would break to its own line as a block. */}
+      {finding.refs.map((id) => (
+        <Fragment key={id}>
+          {' '}
+          <EntryRef id={id} />
+        </Fragment>
+      ))}
     </li>
   )
 }

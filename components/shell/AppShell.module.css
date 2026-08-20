@@ -99,5 +99,12 @@
     border-top: none;
     border-left: 1px solid var(--color-rule-strong);
     background: none;
+    transition: height var(--duration-base) var(--ease-standard);
+  }
+
+  /* When the notes tray is open it occupies the bottom strip full-width; pull
+     the chat column up above it so its input row stays clickable. */
+  .root:has([data-mark]:checked) .panel {
+    height: calc(100vh - var(--chrome-top) - var(--chrome-bottom) - var(--tray-height));
   }
 }

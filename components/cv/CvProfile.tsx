@@ -10,6 +10,10 @@ type CvProfileProps = {
 
 export async function CvProfile({locale}: CvProfileProps) {
   const {id, text} = cv.profile
+  // The profile may hold several paragraphs, separated by newlines. Fall back
+  // to the default locale so an unexpected/empty locale never crashes render.
+  const body = text[locale] ?? text.de
+  const paragraphs = body.split('\n').filter((line) => line.trim() !== '')
 
   return (
     <div className={`${styles.root} addressable`} id={id} data-entry={id} data-print="entry">
@@ -17,7 +21,13 @@ export async function CvProfile({locale}: CvProfileProps) {
         <CvAddress id={id} />
         <MarkToggle entryId={id} description={cv.person.role[locale]} />
       </div>
-      <p className={styles.text}>{text[locale]}</p>
+      <div className={styles.text}>
+        {paragraphs.map((paragraph, index) => (
+          <p className={styles.paragraph} key={index}>
+            {paragraph}
+          </p>
+        ))}
+      </div>
     </div>
   )
 }

@@ -36,6 +36,19 @@ export async function CvEducation({locale}: CvEducationProps) {
             <h3 className={styles.qualification}>{entry.qualification[locale]}</h3>
             <p className={styles.institution}>{entry.institution}</p>
             {entry.note ? <p className={styles.note}>{entry.note[locale]}</p> : null}
+            {entry.href ? (
+              <p className={styles.credential}>
+                <a
+                  className={styles.verify}
+                  href={entry.href}
+                  rel="noreferrer"
+                  target="_blank"
+                  data-print="resolve-url"
+                >
+                  {t('verify')}
+                </a>
+              </p>
+            ) : null}
           </div>
         </div>
       ))}

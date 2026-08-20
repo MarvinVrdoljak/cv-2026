@@ -11,23 +11,28 @@ import styles from './ChatPanel.module.css'
 
 /**
  * Permanently present, never a widget to open: its own column on desktop, a
- * bar at the bottom edge on mobile that unfolds on focus. Suggestions follow
- * the section in view, and gain job-ad-specific prompts once a match has run.
- * Answers stream token by token and cite CV entries the reader can jump to.
+ * bar at the bottom edge on mobile that unfolds on focus. Answers stream token
+ * by token and cite CV entries the reader can jump to.
  */
 export function ChatPanel() {
   const t = useTranslations('chat')
-  const {chat, runChat, clearChat, activeSection, matching} = useAppState()
+  const {chat, runChat, clearChat} = useAppState()
   const [text, setText] = useState('')
   const transcriptRef = useRef<HTMLDivElement>(null)
 
   const streaming = chat.state === 'streaming'
 
-  // Suggestions for the visible section, plus job-ad prompts after a match.
-  const perSection = t.raw('suggestions') as Record<string, string[]>
-  const base = perSection[activeSection] ?? []
-  const matched = matching.advert ? (t.raw('suggestionsMatched') as string[]) : []
-  const suggestions = [...matched, ...base].slice(0, 4)
+  // Four suggestions, fixed for the session: seeded deterministically for SSR,
+  // then shuffled once on mount (client-only, so no hydration mismatch). They
+  // do not change on scroll.
+  const pool = t.raw('suggestions') as string[]
+  const [suggestions, setSuggestions] = useState<string[]>(() => pool.slice(0, 4))
+  useEffect(() => {
+    const p = t.raw('suggestions') as string[]
+    setSuggestions([...p].sort(() => Math.random() - 0.5).slice(0, 4))
+    // Run once on mount — a fresh random set per visit, stable thereafter.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Keep the newest turn in view as it streams.
   useEffect(() => {
@@ -90,7 +95,7 @@ export function ChatPanel() {
             )}
           </div>
 
-          {suggestions.length > 0 ? (
+          {chat.messages.length === 0 && suggestions.length > 0 ? (
             <div className={styles.suggestions}>
               <p className={styles.suggestionsLabel}>{t('suggestionsLabel')}</p>
               <ul className={styles.chips}>

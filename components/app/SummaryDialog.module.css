@@ -86,6 +86,7 @@
 .assessmentText {
   font-size: var(--font-size-base);
   line-height: 1.55;
+  white-space: pre-line;
 }
 
 .caret {

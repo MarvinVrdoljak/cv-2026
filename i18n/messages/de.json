@@ -29,11 +29,13 @@
     "durationMonths": "{months} M.",
     "durationYearsMonths": "{years} J. {months} M.",
     "stackLabel": "Eingesetzt",
+    "born": "geb.",
     "contactLabel": "Kontakt",
     "entryLabel": "Eintrag",
     "mark": "Markieren",
     "marked": "Markiert",
-    "markHint": "Markierte Stellen sammeln sich unten in der Leiste."
+    "markHint": "Markierte Stellen sammeln sich unten in der Leiste.",
+    "verify": "Nachweis anzeigen"
   },
   "match": {
     "label": "Stellenanzeige",
@@ -56,26 +58,16 @@
     "answerLabel": "Antwort",
     "clear": "Leeren",
     "suggestionsLabel": "Vorgeschlagene Fragen",
-    "suggestionsMatched": ["Wie gut passt das Profil zur Anzeige?", "Was fehlt für diese Stelle?"],
-    "suggestions": {
-      "profile": [
-        "Wie verbinden sich hier Design und Entwicklung?",
-        "Was zeichnet das Profil aus?"
-      ],
-      "experience": [
-        "Wie tief geht die Erfahrung mit React und mobilen Apps?",
-        "Wie wird KI in der Entwicklung eingesetzt?"
-      ],
-      "skills": [
-        "Wie belastbar sind die KI-Kenntnisse?",
-        "Welche Belege gibt es für Barrierefreiheit?"
-      ],
-      "education": [
-        "Wie hängen Ausbildung und heutige Rolle zusammen?",
-        "Welche Zertifikate liegen vor?"
-      ],
-      "languages": ["Auf welchem Niveau ist das Englisch?"]
-    },
+    "suggestions": [
+      "Wie vereint Marvin Design und Entwicklung?",
+      "Welche eigenen Produkte hat er gebaut?",
+      "Wie arbeitet er mit KI?",
+      "Wie hat sich sein Tech-Stack entwickelt?",
+      "Was verantwortet er als Senior Developer bei DU DA?",
+      "Wie geht er mit Barrierefreiheit um?",
+      "Was sind seine Stärken und Schwächen?",
+      "Ab wann und wo ist er verfügbar?"
+    ],
     "inputLabel": "Frage zum Lebenslauf",
     "placeholder": "Frage stellen …",
     "send": "Senden",

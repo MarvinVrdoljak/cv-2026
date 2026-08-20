@@ -134,10 +134,21 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* Anchor jumps from matching/chat land below the fixed chrome */
+  /* Anchor jumps land below the fixed chrome. */
   html {
     scroll-behavior: smooth;
     scroll-padding-top: calc(var(--chrome-top) + var(--spacing-24));
+  }
+
+  /* Firefox (and any engine without ::-webkit-scrollbar) only. In Blink/WebKit
+     setting scrollbar-width/color DISABLES the ::-webkit-scrollbar pseudos and
+     forces the native thin bar — so the standard props are gated to engines
+     that cannot use the custom pseudo-elements below. */
+  @supports not (selector(::-webkit-scrollbar)) {
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-rule-strong) var(--color-surface);
+    }
   }
 
   /* Focus is never hidden — the accent marks the active element */
@@ -149,6 +160,40 @@
   ::selection {
     background: var(--color-accent-wash);
     color: var(--color-text);
+  }
+
+  /* WebKit/Blink scrollbars: a slim thumb inset from a transparent track by a
+     transparent border, so it reads as a hairline rather than a chrome bar. */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-surface);
+  }
+
+  /* No up/down buttons — arrows removed top and bottom */
+  ::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-rule-strong);
+    background-clip: padding-box;
+    border: 3px solid transparent;
+    border-radius: 0;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: var(--color-surface);
   }
 
   /* Motion explains state changes; it is never required to understand them */

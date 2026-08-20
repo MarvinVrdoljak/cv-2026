@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="41 40 438 438" width="438" height="438">
+  <!--
+    Statische Dark-Variante von favicon.svg. Nötig, weil Chromium die
+    prefers-color-scheme-Abfrage IN einem Favicon-SVG nicht auswertet;
+    dort tauscht ein kleines Skript im Layout die href gegen diese Datei.
+    Firefox/Safari brauchen sie nicht — die lesen favicon.svg korrekt.
+  -->
+  <rect fill="#eceae5" x="41" y="40" width="438" height="438" />
+  <path
+    fill="#101013"
+    d="M218.31 267.3V204.978H216.054L174.6 306.216L133.146 204.978H130.89V267.3V366H109.176V169.164H139.632L174.318 256.02H176.01L210.696 169.164H240.024V366H218.31V267.3ZM327.616 366L269.242 169.164H294.34L322.258 267.582L343.408 342.03H344.818L365.968 267.582L393.886 169.164H418.138L359.764 366H327.616Z"
+  />
+</svg>

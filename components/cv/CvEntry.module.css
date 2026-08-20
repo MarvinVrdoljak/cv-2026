@@ -1,23 +1,10 @@
 .root {
   padding: var(--spacing-20) 0;
   border-top: 1px solid var(--color-rule);
-  transition:
-    background var(--duration-base) var(--ease-standard),
-    box-shadow var(--duration-base) var(--ease-standard);
 }
 
-/* Marked: a persistent accent rule down the entry's leading edge */
-.root:has([data-mark]:checked) {
-  box-shadow: inset 2px 0 0 0 var(--color-accent);
-}
-
-/* Cited by matching or chat: the leading edge widens once, then settles.
-   The wash never darkens enough to touch the text contrast. */
-.root[data-highlight='true'] {
-  background: var(--color-accent-wash);
-  box-shadow: inset 2px 0 0 0 var(--color-accent);
-  animation: flash var(--duration-slow) var(--ease-standard);
-}
+/* Marked + cited states (accent bar + wash) live on the shared .addressable
+   utility, so every entry type stays consistent. */
 
 /* Mobile: identifier and mark control share one row above the entry */
 .gutter {
@@ -84,13 +71,29 @@
   color: var(--color-text-muted);
 }
 
-/* Location follows the employer, set off by a middot */
-.location {
+/* The company name; a link when the employer has a website */
+.organisationLink {
+  color: var(--color-text-muted);
+  text-decoration-color: var(--color-rule-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition:
+    color var(--duration-fast) var(--ease-standard),
+    text-decoration-color var(--duration-fast) var(--ease-standard);
+}
+
+.organisationLink:hover {
+  color: var(--color-text);
+  text-decoration-color: var(--color-text);
+}
+
+/* Employment type and location follow the employer, each set off by a middot */
+.organisationMeta {
   position: relative;
   padding-left: var(--spacing-12);
 }
 
-.location::before {
+.organisationMeta::before {
   position: absolute;
   left: 0;
   content: '·';
@@ -121,37 +124,6 @@
   height: 1px;
   background: var(--color-rule-strong);
   content: '';
-}
-
-.stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-4) var(--spacing-8);
-  margin: var(--spacing-16) 0 0;
-}
-
-.stackLabel {
-  font-family: var(--font-mono);
-  font-size: var(--font-size-xs);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-
-.stackItems {
-  font-family: var(--font-mono);
-  font-size: var(--font-size-xs);
-  color: var(--color-text);
-}
-
-@keyframes flash {
-  from {
-    box-shadow: inset 6px 0 0 0 var(--color-accent);
-  }
-
-  to {
-    box-shadow: inset 2px 0 0 0 var(--color-accent);
-  }
 }
 
 @media (--bp-medium-up) {

@@ -2,6 +2,18 @@
   padding-top: var(--block-spacing-md);
 }
 
+/* Portrait left, name + role right — together above the contact rule */
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-20);
+}
+
+.heading {
+  min-width: 0;
+  flex: 1;
+}
+
 .name {
   max-width: var(--measure);
   margin: 0;

@@ -29,11 +29,13 @@
     "durationMonths": "{months} mo",
     "durationYearsMonths": "{years} yr {months} mo",
     "stackLabel": "Worked with",
+    "born": "Born",
     "contactLabel": "Contact",
     "entryLabel": "Entry",
     "mark": "Mark",
     "marked": "Marked",
-    "markHint": "Marked entries collect in the bar below."
+    "markHint": "Marked entries collect in the bar below.",
+    "verify": "View credential"
   },
   "match": {
     "label": "Job ad",
@@ -56,29 +58,16 @@
     "answerLabel": "Answer",
     "clear": "Clear",
     "suggestionsLabel": "Suggested questions",
-    "suggestionsMatched": [
-      "How well does the profile fit the ad?",
-      "What is missing for this role?"
+    "suggestions": [
+      "How does Marvin combine design and development?",
+      "What own products has he built?",
+      "How does he work with AI?",
+      "How has his tech stack evolved?",
+      "What does he own as Senior Developer at DU DA?",
+      "How does he approach accessibility?",
+      "What are his strengths and weaknesses?",
+      "When and where is he available?"
     ],
-    "suggestions": {
-      "profile": [
-        "How do design and development connect here?",
-        "What stands out about this profile?"
-      ],
-      "experience": [
-        "How deep does the React and mobile-app experience go?",
-        "How is AI used in the development work?"
-      ],
-      "skills": [
-        "How solid is the AI experience?",
-        "What evidence is there for accessibility work?"
-      ],
-      "education": [
-        "How do the studies connect to the current role?",
-        "What certificates are there?"
-      ],
-      "languages": ["What level is the English at?"]
-    },
     "inputLabel": "Question about this CV",
     "placeholder": "Ask a question …",
     "send": "Send",

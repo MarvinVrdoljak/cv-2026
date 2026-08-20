@@ -23,8 +23,9 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
 
 - **Eine Datenquelle:** [data/cv.ts](data/cv.ts) — typisiert, zweisprachig, jede Station/
   jeder Block mit stabiler `id`. Speist Darstellung **und** Modellkontext
-  ([lib/cvContext.ts](lib/cvContext.ts)). ⚠ Zwei Datumsangaben (exp-01, exp-02) sind
-  geschätzt und im Datei-Kopf markiert.
+  ([lib/cvContext.ts](lib/cvContext.ts)). Der `about`-Block (Projekte, Interessen, Stärken,
+  Schwächen, Sonstiges) wird **nicht gedruckt**, speist aber den Chat/Matching/Summary-Kontext
+  — leere Listen ⇒ der Assistent sagt ehrlich „nicht hinterlegt".
 - **API-Route:** [app/api/assistant/route.ts](app/api/assistant/route.ts) — ein POST-Endpunkt
   für `matching | chat | summary`, Node-Runtime, streamt über die Web-Streams-API. Key
   serverseitig ([lib/openai.ts](lib/openai.ts)). Rate-Limit pro Session-Cookie + Tagesdeckel

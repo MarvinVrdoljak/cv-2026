@@ -64,8 +64,33 @@ export async function CvEntry({entry, locale}: CvEntryProps) {
 
         <h3 className={styles.role}>{entry.role[locale]}</h3>
         <p className={styles.organisation}>
-          <span className={styles.organisationName}>{entry.organisation}</span>
-          <span className={styles.location}>{entry.location}</span>
+          {(() => {
+            // Split "Company · Vollzeit" so only the company name links.
+            const [company, ...rest] = entry.organisation.split(' · ')
+            const meta = [...rest, entry.location]
+            return (
+              <>
+                {entry.organisationHref ? (
+                  <a
+                    className={styles.organisationLink}
+                    href={entry.organisationHref}
+                    rel="noreferrer"
+                    target="_blank"
+                    data-print="resolve-url"
+                  >
+                    {company}
+                  </a>
+                ) : (
+                  <span className={styles.organisationName}>{company}</span>
+                )}
+                {meta.map((segment) => (
+                  <span className={styles.organisationMeta} key={segment}>
+                    {segment}
+                  </span>
+                ))}
+              </>
+            )
+          })()}
         </p>
         <p className={styles.summary}>{entry.summary[locale]}</p>
 
@@ -76,11 +101,6 @@ export async function CvEntry({entry, locale}: CvEntryProps) {
             </li>
           ))}
         </ul>
-
-        <p className={styles.stack}>
-          <span className={styles.stackLabel}>{t('stackLabel')}</span>
-          <span className={styles.stackItems}>{entry.stack.join(' · ')}</span>
-        </p>
       </div>
     </article>
   )

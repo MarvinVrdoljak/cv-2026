@@ -6,19 +6,9 @@
 .entry {
   padding: var(--spacing-20) 0;
   border-top: 1px solid var(--color-rule);
-  transition:
-    background var(--duration-base) var(--ease-standard),
-    box-shadow var(--duration-base) var(--ease-standard);
 }
 
-.entry:has([data-mark]:checked) {
-  box-shadow: inset 2px 0 0 0 var(--color-accent);
-}
-
-.entry[data-highlight='true'] {
-  background: var(--color-accent-wash);
-  box-shadow: inset 2px 0 0 0 var(--color-accent);
-}
+/* Marked + cited states live on the shared .addressable utility. */
 
 .gutter {
   display: flex;
@@ -58,6 +48,28 @@
   margin: var(--spacing-8) 0 0;
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
+}
+
+.credential {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--spacing-6) var(--spacing-12);
+  margin: var(--spacing-8) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+}
+
+.verify {
+  color: var(--color-accent);
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.verify:hover {
+  color: var(--color-accent-strong);
 }
 
 @media (--bp-medium-up) {

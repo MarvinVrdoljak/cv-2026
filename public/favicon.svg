@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="41 40 438 438" width="438" height="438">
+  <!--
+    MV-Monogramm. Die Farbwerte spiegeln styles/base/tokens.css von Hand:
+    ein Favicon rendert in einem eigenen Kontext, in dem die CSS-Variablen
+    des Dokuments NICHT gelten — deshalb hier ausnahmsweise Hex.
+    Light: Tinte auf Papier invertiert (dunkle Fläche). Dark: umgekehrt.
+    So steht die Marke in beiden Browser-Chromes im Kontrast.
+  -->
+  <style>
+    .tile {
+      fill: #16161a; /* --color-text (light) */
+    }
+
+    .mark {
+      fill: #fbfaf8; /* --color-background (light) */
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .tile {
+        fill: #eceae5; /* --color-text (dark) */
+      }
+
+      .mark {
+        fill: #101013; /* --color-background (dark) */
+      }
+    }
+  </style>
+  <rect class="tile" x="41" y="40" width="438" height="438" />
+  <path
+    class="mark"
+    d="M218.31 267.3V204.978H216.054L174.6 306.216L133.146 204.978H130.89V267.3V366H109.176V169.164H139.632L174.318 256.02H176.01L210.696 169.164H240.024V366H218.31V267.3ZM327.616 366L269.242 169.164H294.34L322.258 267.582L343.408 342.03H344.818L365.968 267.582L393.886 169.164H418.138L359.764 366H327.616Z"
+  />
+</svg>

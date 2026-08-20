@@ -6,19 +6,9 @@
 .entry {
   padding: var(--spacing-16) 0;
   border-top: 1px solid var(--color-rule);
-  transition:
-    background var(--duration-base) var(--ease-standard),
-    box-shadow var(--duration-base) var(--ease-standard);
 }
 
-.entry:has([data-mark]:checked) {
-  box-shadow: inset 2px 0 0 0 var(--color-accent);
-}
-
-.entry[data-highlight='true'] {
-  background: var(--color-accent-wash);
-  box-shadow: inset 2px 0 0 0 var(--color-accent);
-}
+/* Marked + cited states live on the shared .addressable utility. */
 
 .gutter {
   display: flex;

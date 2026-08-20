@@ -1,6 +1,8 @@
 import {getTranslations} from 'next-intl/server'
 import type {Locale} from '@/i18n/routing'
 import {cv} from '@/data/cv'
+import {formatFullDate} from '@/lib/format'
+import {CvPortrait} from './CvPortrait'
 import styles from './CvIdentity.module.css'
 
 type CvIdentityProps = {
@@ -17,10 +19,18 @@ export async function CvIdentity({locale}: CvIdentityProps) {
 
   return (
     <header className={styles.root}>
-      <h1 className={styles.name}>{cv.person.name}</h1>
-      <p className={styles.role}>{cv.person.role[locale]}</p>
+      <div className={styles.head}>
+        <CvPortrait />
+        <div className={styles.heading}>
+          <h1 className={styles.name}>{cv.person.name}</h1>
+          <p className={styles.role}>{cv.person.role[locale]}</p>
+        </div>
+      </div>
 
       <ul className={styles.meta} aria-label={t('contactLabel')}>
+        <li className={styles.metaItem}>
+          {t('born')} {formatFullDate(cv.person.birthDate, locale)}
+        </li>
         <li className={styles.metaItem}>{cv.person.location}</li>
         <li className={styles.metaItem}>
           <a className={styles.metaLink} href={`mailto:${cv.person.email}`}>

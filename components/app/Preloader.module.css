@@ -1,0 +1,78 @@
+/* Hidden by default; shown only once the pre-paint inline script has flagged
+   that JS is running. With JS off it never appears, so the CV stays readable. */
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-background);
+  opacity: 1;
+  transition: opacity 0.4s var(--ease-standard);
+}
+
+html[data-js] .root {
+  display: flex;
+}
+
+.root[data-done='true'] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-16);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.meter {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-6);
+  margin: 0;
+}
+
+.count {
+  font-family: var(--font-mono);
+  font-size: clamp(64px, 14vw, 128px);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: var(--tracking-display);
+  color: var(--color-text);
+}
+
+.percent {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+}
+
+/* A hairline track across the foot of the screen; the accent fills it 0→100. */
+.bar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--color-rule);
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  background: var(--color-accent);
+  transform-origin: left center;
+  transform: scaleX(0);
+}

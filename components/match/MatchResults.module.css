@@ -73,14 +73,6 @@
   color: inherit;
 }
 
-.refs {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-4);
-  margin-left: var(--spacing-8);
-  vertical-align: baseline;
-}
-
 .bucketEmpty {
   margin: 0;
   padding: var(--spacing-8) 0;

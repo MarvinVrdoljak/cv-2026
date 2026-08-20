@@ -11,7 +11,6 @@ import React, {
 } from 'react'
 import {useTranslations} from 'next-intl'
 import type {Locale} from '@/i18n/routing'
-import {SECTIONS, sectionId, type SectionKey} from '@/lib/sections'
 import type {ChatMessage, MatchFinding, MatchLine, StreamState} from '@/lib/types'
 import {AssistantError, streamAssistant} from '@/lib/streamAssistant'
 import {
@@ -56,7 +55,6 @@ type AppStateValue = {
   closeSummary: () => void
 
   status: {state: StreamState; model: string | null; latencyMs: number | null}
-  activeSection: SectionKey
   error: string | null
   dismissError: () => void
 }
@@ -125,7 +123,6 @@ export function AppState({locale, children}: AppStateProps) {
     model: null,
     latencyMs: null,
   })
-  const [activeSection, setActiveSection] = useState<SectionKey>(SECTIONS[0])
   const [error, setError] = useState<string | null>(null)
 
   const [hoverIds, setHoverIds] = useState<string[]>([])
@@ -188,28 +185,6 @@ export function AppState({locale, children}: AppStateProps) {
     if (matching.order.length > 0) reorderExperience(matching.order)
   }, [matching.order])
 
-  // ---- Which section is in view — drives the chat suggestions ----
-  useEffect(() => {
-    const targets = SECTIONS.map((key) => document.getElementById(sectionId(key))).filter(
-      (el): el is HTMLElement => el !== null
-    )
-    if (targets.length === 0) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-        if (!visible) return
-        const key = SECTIONS.find((k) => sectionId(k) === visible.target.id)
-        if (key) setActiveSection(key)
-      },
-      {rootMargin: '-20% 0px -60% 0px', threshold: [0, 0.25, 0.5]}
-    )
-    targets.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [])
-
   // Clean up timers/requests on unmount.
   useEffect(() => {
     return () => {
@@ -259,7 +234,13 @@ export function AppState({locale, children}: AppStateProps) {
               Extract<MatchLine, {type: 'reject'}> | undefined
             const findings = lines
               .filter((l): l is Extract<MatchLine, {type: 'finding'}> => l.type === 'finding')
-              .map((l) => ({bucket: l.bucket, text: l.text, refs: l.refs ?? []}))
+              .map((l) => ({
+                bucket: l.bucket,
+                text: l.text,
+                // Keep only real, addressable entry ids — the model sometimes
+                // emits things like "about" that point to nothing renderable.
+                refs: (l.refs ?? []).filter((id) => /^[a-z]{3}-\d{2}$/.test(id)),
+              }))
 
             setMatching((m) => ({
               ...m,
@@ -406,7 +387,6 @@ export function AppState({locale, children}: AppStateProps) {
       runSummary,
       closeSummary,
       status,
-      activeSection,
       error,
       dismissError,
     }),
@@ -424,7 +404,6 @@ export function AppState({locale, children}: AppStateProps) {
       runSummary,
       closeSummary,
       status,
-      activeSection,
       error,
       dismissError,
     ]

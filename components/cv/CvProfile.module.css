@@ -1,18 +1,8 @@
 .root {
   padding-bottom: var(--spacing-8);
-  transition:
-    background var(--duration-base) var(--ease-standard),
-    box-shadow var(--duration-base) var(--ease-standard);
 }
 
-.root:has([data-mark]:checked) {
-  box-shadow: inset 2px 0 0 0 var(--color-accent);
-}
-
-.root[data-highlight='true'] {
-  background: var(--color-accent-wash);
-  box-shadow: inset 2px 0 0 0 var(--color-accent);
-}
+/* Marked + cited states live on the shared .addressable utility. */
 
 .gutter {
   display: flex;
@@ -22,8 +12,15 @@
 }
 
 .text {
-  margin: 0;
   font-size: var(--font-size-base);
+}
+
+.paragraph {
+  margin: 0;
+}
+
+.paragraph + .paragraph {
+  margin-top: var(--spacing-12);
 }
 
 @media (--bp-medium-up) {

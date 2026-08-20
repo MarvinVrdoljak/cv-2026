@@ -29,6 +29,7 @@ export function QueryBar() {
   const streaming = matching.state === 'streaming'
   const hasResult =
     matching.state !== 'idle' && (matching.findings.length > 0 || matching.rejected !== null)
+  const canReset = hasResult || Boolean(matching.advert)
 
   function submit() {
     if (!text.trim() || streaming) return
@@ -78,16 +79,28 @@ export function QueryBar() {
             type="button"
             onClick={submit}
             disabled={!text.trim() || streaming}
+            aria-busy={streaming}
           >
-            {streaming ? t('analysing') : t('submit')}
+            {t('submit')}
           </button>
-          {hasResult || matching.advert ? (
-            <button className={`${styles.reset} button button-quiet`} type="button" onClick={reset}>
-              {t('reset')}
-            </button>
-          ) : null}
+          {/* Always rendered, only hidden — appearing on submit would shove the
+              field, which is the same jump the label used to cause. */}
+          <button
+            className={`${styles.reset} button button-quiet`}
+            type="button"
+            onClick={reset}
+            data-idle={canReset ? undefined : 'true'}
+          >
+            {t('reset')}
+          </button>
         </div>
       </div>
+
+      {/* Reports the start of a run. The results region below can't: it is only
+          mounted once the first finding has arrived. */}
+      <p className="visually-hidden" role="status">
+        {streaming ? t('analysing') : ''}
+      </p>
 
       <p className={styles.hint} id="query-hint">
         {t('hint')}

@@ -15,6 +15,13 @@ export function formatMonth(value: YearMonth, locale: Locale): string {
   return `${String(month).padStart(2, '0')}${SEPARATOR[locale]}${year}`
 }
 
+/** Full date from ISO `YYYY-MM-DD`: `23.02.1992` (de) · `23/02/1992` (en). */
+export function formatFullDate(iso: string, locale: Locale): string {
+  const [year, month, day] = iso.split('-')
+  const sep = SEPARATOR[locale]
+  return `${day}${sep}${month}${sep}${year}`
+}
+
 /** `03.2021 – 08.2024`, or `03.2021 – heute` for an ongoing engagement. */
 export function formatPeriod(
   from: YearMonth,

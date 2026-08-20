@@ -113,6 +113,11 @@
 .body {
   font-size: var(--font-size-sm);
   line-height: 1.55;
+  padding-right: var(--spacing-8);
+
+  /* Preserve line breaks the model sends (e.g. a short list), collapse runs
+     of spaces. Bullet markers are already stripped in RefText. */
+  white-space: pre-line;
 }
 
 /* The question recedes; the answer carries the accent-tinted rule */

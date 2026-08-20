@@ -1,0 +1,64 @@
+.root {
+  position: relative;
+  flex: none;
+  width: 96px;
+  margin: 0;
+  aspect-ratio: 1;
+}
+
+/* Fallback photo: visible until the matrix has drawn, and for no-JS / print.
+   Monochrome so it matches the matrix's ink-on-paper look. */
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  filter: grayscale(1) contrast(1.05);
+}
+
+/* Once the canvas is ready, it stands in for the photo. */
+.root[data-matrix='ready'] .image {
+  visibility: hidden;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+
+  /* Hidden until the matrix has drawn, then a hard swap from the fallback
+     photo. No opacity transition — it gets stuck at 0 on this freshly-shown
+     element in Blink, the same quirk seen on the entry accent bar. */
+  opacity: 0;
+}
+
+.root[data-matrix='ready'] .canvas {
+  opacity: 1;
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+  transition: box-shadow var(--duration-base) var(--ease-standard);
+}
+
+/* Print: drop the matrix, show the plain photo. */
+@media print {
+  .canvas {
+    display: none;
+  }
+
+  .root[data-matrix='ready'] .image {
+    visibility: visible;
+  }
+}
+
+@media (--bp-medium-up) {
+  .root {
+    width: 150px;
+  }
+}

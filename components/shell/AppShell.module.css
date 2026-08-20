@@ -1,6 +1,9 @@
 .root {
   counter-reset: marks 0;
-  min-height: 100vh;
+
+  /* The small viewport, not the large one: with the browser bars out, 100vh is
+     taller than the screen and the document's last lines sit under them. */
+  min-height: 100dvh;
   background: var(--color-background);
 }
 
@@ -54,19 +57,33 @@
 .panel {
   /* Mobile: a bar pinned above the chrome that opens on focus. It sits on the
      status bar and only steps up when the tray is actually out — reserving the
-     tray's height unconditionally left an empty 44px band below the bar. */
+     tray's height unconditionally left an empty 44px band below the bar.
+
+     max() is what keeps it reachable once the on-screen keyboard is out: iOS
+     keeps the page (and therefore `bottom: 0`) at full height and slides the
+     keyboard over it, so bar and field ended up behind the keyboard. As soon as
+     --keyboard-inset exceeds the chrome the bar rides on the keyboard instead —
+     the status bar it normally sits on is covered by the keyboard anyway. */
   position: fixed;
   right: 0;
-  bottom: var(--chrome-bottom);
+  bottom: max(var(--chrome-bottom), var(--keyboard-inset));
   left: 0;
   z-index: 20;
+
+  /* Never taller than what is actually visible — with the keyboard out that is
+     a few hundred pixels, and an unbounded panel simply grew off the top of the
+     screen: the transcript's newest lines were the ones outside it. Capped, the
+     transcript scrolls inside the panel instead. */
+  display: flex;
+  flex-direction: column;
+  max-height: calc(var(--viewport-height) - var(--chrome-top));
   border-top: 1px solid var(--color-rule-strong);
   background: var(--color-surface);
   transition: bottom var(--duration-base) var(--ease-entrance);
 }
 
 .root:has([data-mark]:checked) .panel {
-  bottom: calc(var(--chrome-bottom) + var(--tray-height));
+  bottom: max(calc(var(--chrome-bottom) + var(--tray-height)), var(--keyboard-inset));
 }
 
 /*
@@ -127,7 +144,8 @@
     position: sticky;
     inset: var(--chrome-top) auto auto auto;
     z-index: 1;
-    height: calc(100vh - var(--chrome-top) - var(--chrome-bottom));
+    max-height: none;
+    height: calc(100dvh - var(--chrome-top) - var(--chrome-bottom));
     border-top: none;
     border-left: 1px solid var(--color-rule-strong);
     background: none;
@@ -137,6 +155,6 @@
   /* When the notes tray is open it occupies the bottom strip full-width; pull
      the chat column up above it so its input row stays clickable. */
   .root:has([data-mark]:checked) .panel {
-    height: calc(100vh - var(--chrome-top) - var(--chrome-bottom) - var(--tray-height));
+    height: calc(100dvh - var(--chrome-top) - var(--chrome-bottom) - var(--tray-height));
   }
 }

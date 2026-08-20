@@ -38,7 +38,10 @@
   color: var(--color-text-muted);
 }
 
+/* Phone: hidden. The name is the first thing the document itself says, 44px
+   below — repeating it in the chrome only cost the bar its air. */
 .identityName {
+  display: none;
   overflow: hidden;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
@@ -123,6 +126,10 @@
 @media (--bp-medium-up) {
   .inner {
     padding-inline: var(--spacing-32);
+  }
+
+  .identityName {
+    display: block;
   }
 
   .localeLabel {

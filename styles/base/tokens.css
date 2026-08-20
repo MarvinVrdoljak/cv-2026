@@ -42,12 +42,17 @@
   --font-size-sm: clamp(13px, 0.8rem + 0.1vw, 14px);
   --font-size-base: clamp(16px, 0.98rem + 0.15vw, 17px);
   --font-size-lg: clamp(19px, 1.15rem + 0.3vw, 21px);
-  --font-size-h1: clamp(30px, 1.8rem + 1.5vw, 44px);
+  --font-size-h1: clamp(28px, 1.16rem + 2.51vw, 44px);
   --font-size-h2: clamp(22px, 1.35rem + 0.7vw, 27px);
   --font-size-h3: clamp(19px, 1.15rem + 0.4vw, 22px);
   --font-size-h4: clamp(17px, 1.05rem + 0.25vw, 19px);
   --font-size-h5: clamp(16px, 0.98rem + 0.15vw, 17px);
   --font-size-h6: clamp(14px, 0.85rem + 0.1vw, 15px);
+
+  /* Every field the reader types into. iOS zooms the whole page when a focused
+     field's text measures under 16px, so on a touch device the fields hold
+     exactly that — and the interface size everywhere else. */
+  --font-size-field: var(--font-size-sm);
 
   --font-weight-body: 400;
   --font-weight-medium: 500;
@@ -105,6 +110,14 @@
      room below itself instead of guessing at it. */
   --chat-bar: 60px;
 
+  /* What the visual viewport is doing, republished per frame by ViewportSync.
+     These are the resting values — no keyboard out, and the same thing without
+     JavaScript. `--keyboard-inset` is how much of the bottom edge is covered
+     right now: the chrome positions itself against that instead of against the
+     bottom of the page, which on iOS stays behind the keyboard. */
+  --keyboard-inset: 0px;
+  --viewport-height: 100dvh;
+
   /* Wide enough for the identifier and the mark control's mono label */
   --gutter-id: 104px;
   --panel-width: 366px;
@@ -133,6 +146,15 @@
     --block-spacing-sm: 44px;
     --block-spacing-md: 68px;
     --block-spacing-lg: 96px;
+  }
+}
+
+/* Touch input — see --font-size-field. Keyed on the pointer rather than on a
+   width: an iPhone in landscape is wider than the medium breakpoint and zooms
+   just the same. */
+@media (pointer: coarse) {
+  :root {
+    --font-size-field: 16px;
   }
 }
 

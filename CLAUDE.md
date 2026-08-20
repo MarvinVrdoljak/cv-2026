@@ -54,6 +54,18 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   nur, was es gibt: „Assistent" (nicht „Status" — sonst bleibt offen, _was_ bereit ist) immer,
   Modell/Antwortzeit erst nach einer Anfrage, Markierungen erst wenn markiert wurde (per
   `:has()` aus AppShell, also ohne JS).
+- **Tastatur & Viewport (mobil):** Die Chat-Leiste liegt fix am unteren Rand — iOS lässt die
+  Bildschirmtastatur darüber gleiten, weil das Layout-Viewport seine Höhe behält. Deshalb
+  veröffentlicht [ViewportSync](components/shell/ViewportSync.tsx) das _visuelle_ Viewport als
+  `--keyboard-inset` (verdeckter Rand) und `--viewport-height`, und das Chrome rechnet damit:
+  `bottom: max(--chrome-bottom, --keyboard-inset)` (die Leiste reitet auf der Tastatur) und
+  `max-height: calc(var(--viewport-height) - var(--chrome-top))` (das Panel wächst nie über den
+  Schirm hinaus — sonst stand der neueste Absatz außerhalb). Ohne JS bleiben die Ruhewerte aus
+  `tokens.css` stehen, also der Fall ohne Tastatur. Android löst dasselbe über
+  `interactiveWidget: 'resizes-content'` (Viewport-Export im Layout); Safari ignoriert es.
+  Höhen im Chrome stehen in `dvh`, nicht `vh` — bei ausgefahrenen Browser-Leisten ist `100vh`
+  höher als der Schirm. Innerhalb des Panels füllt `.inner` den Track, damit **das Transkript**
+  scrollt (und das Nachführen beim Streamen greift), nicht das ganze Panel.
 - **Mobiles Chrome:** Chat-Leiste und Tray liegen über dem Dokument, deshalb reserviert
   `.frame` unten genau deren Höhe (`--chat-bar` + `--chrome-bottom`, plus `--tray-height`
   wenn markiert ist) — sonst ist der Schluss des CV nicht lesbar. Der zugeklappte Chat
@@ -102,6 +114,9 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   expliziten Klasse pro Element — keine Descendant-Selektoren.
 - **Tokens:** Farben, Spacing, Radien, Schriftgrößen ausschließlich über `var(--…)` aus
   `styles/base/tokens.css`. Keine Hex-Werte außerhalb dieser Datei (Stylelint bricht sonst ab).
+- **Eingabefelder:** Schriftgröße immer `var(--font-size-field)` — unter `pointer: coarse` sind
+  das 16px, weil iOS die Seite beim Fokussieren sonst hineinzoomt. Gilt für jedes Feld, in das
+  getippt wird (Chat-Eingabe, Abgleich-Textfeld, URL-Feld).
 - **Einheiten:** Im Quellcode immer `px` schreiben — `postcss-pxtorem` konvertiert beim Build
   zu `rem`. Niemals `rem` von Hand (Ausnahme: `clamp()` in `tokens.css`).
 - **Breakpoints:** `@media (--bp-medium-up)` etc. aus `styles/base/media.css`.

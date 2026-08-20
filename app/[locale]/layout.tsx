@@ -1,6 +1,7 @@
 import '@/styles/globals.css'
 
 import React from 'react'
+import type {Viewport} from 'next'
 import {headers} from 'next/headers'
 import {notFound} from 'next/navigation'
 import {NextIntlClientProvider, hasLocale} from 'next-intl'
@@ -26,6 +27,16 @@ const plexMono = IBM_Plex_Mono({
   weight: ['400', '500'],
   variable: '--font-plex-mono',
 })
+
+// The chat is a bar at the bottom edge on a phone, so the on-screen keyboard
+// must not be allowed to slide over it: this asks the browser to shrink the
+// layout viewport instead, which moves the fixed chrome up with it. Chrome and
+// Android honour it; Safari ignores it, which is what ViewportSync covers.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  interactiveWidget: 'resizes-content',
+}
 
 // Statically generate a layout per locale.
 export function generateStaticParams() {

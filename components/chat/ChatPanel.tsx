@@ -51,6 +51,15 @@ export function ChatPanel() {
     inputRef.current?.focus()
   }
 
+  // The button that was just tapped disappears with the transcript, so focus
+  // would fall out of the panel — and on mobile that folds it shut over an
+  // empty chat. Clearing is not a reason to close it: back into the input,
+  // same as after sending.
+  function clear() {
+    clearChat()
+    inputRef.current?.focus()
+  }
+
   return (
     /* `data-open` holds the panel open while an answer streams, even if focus
        is lost meanwhile (a dismissed keyboard, a tap on the document). Folding
@@ -64,7 +73,7 @@ export function ChatPanel() {
               <h2 className={styles.title}>{t('title')}</h2>
               <KeyHint combo="slash" />
               {chat.messages.length > 0 ? (
-                <button className={styles.clear} type="button" onClick={clearChat}>
+                <button className={styles.clear} type="button" onClick={clear}>
                   {t('clear')}
                 </button>
               ) : null}

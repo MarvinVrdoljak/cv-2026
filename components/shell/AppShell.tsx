@@ -5,6 +5,7 @@ import {TopBar} from './TopBar'
 import {StatusBar} from './StatusBar'
 import {NoteTray} from './NoteTray'
 import {KeyBindings} from './KeyBindings'
+import {ViewportSync} from './ViewportSync'
 import styles from './AppShell.module.css'
 
 type AppShellProps = {
@@ -53,6 +54,7 @@ export async function AppShell({locale, children, panel}: AppShellProps) {
 
       <StatusBar locale={locale} />
       <KeyBindings />
+      <ViewportSync />
     </div>
   )
 }

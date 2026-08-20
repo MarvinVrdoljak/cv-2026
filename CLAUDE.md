@@ -62,7 +62,9 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   und `data-open` hält das Panel während des Streamens offen — sonst klappte es beim Senden zu
   (der Senden-Knopf wird `disabled` und verliert den Fokus).
 - **Typografie:** IBM Plex Sans (Inhalt) + IBM Plex Mono (Interface) via `next/font`. Der
-  Sans/Mono-Wechsel trennt Inhalt von Interface. Zeilenlänge geprüft auf ~70 Zeichen
+  Sans/Mono-Wechsel trennt Inhalt von Interface — auch im Kopf: Name in der Display-Stimme
+  (Sans 600), Rolle in der Interface-Stimme (Mono, uppercase, `tracking-label`, Tinte),
+  Kontaktzeile ebenso, aber gedeckt. Drei Bänder, drei Lautstärken. Zeilenlänge geprüft auf ~70 Zeichen
   (`--measure: 56ch`; `1ch` = Breite der „0", breiter als das Durchschnittszeichen).
 - **Farbe/Motion:** ein Akzent nur für aktive Zustände; Palette rechnerisch gegen WCAG AA
   geprüft (Light + Dark). Motion 150–250 ms mit eigenen Kurven, `prefers-reduced-motion`
@@ -86,7 +88,7 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   Schriftgrößen** für das ganze Dokument (`mono` Interface · `small` Sekundärtext · `body`
   Fließtext · `title` Eintragstitel) — Hierarchie über Gewicht, Auszeichnung und Abstand, nicht
   über Größe. Alles Mono ist Interface und steht **uppercase mit `tracking.label`** (ids,
-  Kontaktzeile, Abschnitts- und Meta-Zeilen), genau wie am Bildschirm. Jeder Eintrag hat
+  Rolle im Kopf, Kontaktzeile, Abschnitts- und Meta-Zeilen), genau wie am Bildschirm. Jeder Eintrag hat
   dieselbe Form: Mono-Zeile oben, Titel darunter. Der erste Eintrag eines Abschnitts trägt
   **keinen** Trennstrich (die Abschnittslinie steht schon da).
 - **Print (Fallback):** [styles/print.css](styles/print.css) blendet das Interface aus;

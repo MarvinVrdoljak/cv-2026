@@ -45,11 +45,17 @@ const s = StyleSheet.create({
     letterSpacing: tracking.display,
     lineHeight: leading.heading,
   },
+  // Mono, tracked out, upper case — the same switch the screen makes: the name
+  // carries the display voice, the role the interface one, and the contact row
+  // below recedes into muted. Three bands, three degrees of loudness.
   role: {
-    marginTop: space.xs,
-    fontSize: size.title,
-    color: color.muted,
-    lineHeight: leading.heading,
+    marginTop: space.sm,
+    fontFamily: MONO,
+    fontSize: size.small,
+    letterSpacing: tracking.label,
+    textTransform: 'uppercase',
+    color: color.ink,
+    lineHeight: leading.mono,
   },
   // The contact row is interface, not prose: mono, tracked out and upper case,
   // exactly like the screen's identity meta and like every other label here.

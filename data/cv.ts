@@ -327,6 +327,15 @@ export const cv: Cv = {
       items: ['WordPress', 'Payload CMS', 'REST-API', 'Git', 'CI/CD', 'Vercel', 'Scrum'],
       note: null,
     },
+    {
+      id: 'skl-06',
+      label: {de: 'Datenbanken', en: 'Databases'},
+      items: ['SQL', 'PostgreSQL', 'SQLite', 'MongoDB'],
+      note: {
+        de: 'Kein Datenbank-Spezialist, aber das Aufsetzen und Bearbeiten von Datenbanken gelingt problemlos – gern KI-gestützt.',
+        en: 'No database specialist, but setting up and working with databases is no problem — often AI-assisted.',
+      },
+    },
   ],
 
   education: [

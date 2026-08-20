@@ -23,11 +23,21 @@
   letter-spacing: var(--tracking-display);
 }
 
+/* The role switches voice instead of just shrinking: mono, tracked out, upper
+   case — the same interface type as the section labels and the contact row
+   below. Name and role were both set in the sans, which made the pair read as
+   "big text, smaller grey text" and left the document's most prominent block
+   as the only one not speaking the sans/mono contrast the rest is built on.
+   Ink, not muted, so it stays a statement and the contact row below it
+   recedes: display type, then the role, then the metadata. */
 .role {
   max-width: var(--measure);
-  margin: var(--spacing-6) 0 0;
-  font-size: var(--font-size-lg);
-  color: var(--color-text-muted);
+  margin: var(--spacing-10) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text);
 }
 
 .meta {

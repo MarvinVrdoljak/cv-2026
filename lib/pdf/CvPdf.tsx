@@ -288,8 +288,8 @@ export function CvPdf({locale, labels}: CvPdfProps) {
               <Text style={s.groupLabel}>{group.label[locale]}</Text>
               <View style={s.chips}>
                 {group.items.map((item) => (
-                  <View style={s.chip} key={item}>
-                    <Text style={s.chipLabel}>{item}</Text>
+                  <View style={s.chip} key={item.name}>
+                    <Text style={s.chipLabel}>{item.name}</Text>
                   </View>
                 ))}
               </View>

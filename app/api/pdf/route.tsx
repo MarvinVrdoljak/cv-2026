@@ -8,11 +8,18 @@ import {collectValidIds} from '@/lib/cvContext'
 import {formatFullDate, pickDurationKey} from '@/lib/format'
 import {MAX_LENGTH, checkRenderLimit} from '@/lib/rateLimit'
 import {SECTIONS} from '@/lib/sections'
+import {siteUrl} from '@/lib/siteUrl'
 import {registerPdfFonts} from '@/lib/pdf/fonts'
 import {CvPdf} from '@/lib/pdf/CvPdf'
+import {QrPdf} from '@/lib/pdf/QrPdf'
 import {SummaryPdf} from '@/lib/pdf/SummaryPdf'
 import {resolveMarked} from '@/lib/pdf/marked'
-import {pdfFilename, type CvPdfLabels, type SummaryPdfLabels} from '@/lib/pdf/labels'
+import {
+  pdfFilename,
+  type CvPdfLabels,
+  type QrPdfLabels,
+  type SummaryPdfLabels,
+} from '@/lib/pdf/labels'
 
 /**
  * The two documents, typeset on the server.
@@ -22,9 +29,9 @@ import {pdfFilename, type CvPdfLabels, type SummaryPdfLabels} from '@/lib/pdf/la
  * CV is set as a real document — A4, margins, running foot, entries that keep
  * together — out of the same single source that renders the screen.
  *
- * GET fetches the CV, so the download is an ordinary link and works with
- * JavaScript switched off. POST is for the notes summary, which has to carry
- * the marked ids and the streamed assessment with it.
+ * GET fetches the CV or the one-page card, so both are ordinary links and work
+ * with JavaScript switched off. POST is for the notes summary, which has to
+ * carry the marked ids and the streamed assessment with it.
  *
  * The browser's own print path stays intact (styles/print.css) as the fallback
  * for Ctrl+P and for anyone without JavaScript who wants paper right now.
@@ -57,6 +64,23 @@ async function cvLabels(locale: Locale): Promise<CvPdfLabels> {
     present: entry('present'),
     verify: entry('verify'),
     duration: (years, months) => entry(pickDurationKey(years, months), {years, months}),
+    pageLabel: (page, total) => pdf('page', {page, total}),
+  }
+}
+
+async function qrLabels(locale: Locale): Promise<QrPdfLabels> {
+  const pdf = await getTranslations({locale, namespace: 'pdf'})
+  const entry = await getTranslations({locale, namespace: 'cv'})
+
+  return {
+    docTitle: pdf('qrTitle'),
+    sections: await sectionLabels(locale),
+    born: entry('born'),
+    present: entry('present'),
+    duration: (years, months) => entry(pickDurationKey(years, months), {years, months}),
+    scanLabel: pdf('qrScanLabel'),
+    scanTitle: pdf('qrScanTitle'),
+    scanHint: pdf('qrScanHint'),
     pageLabel: (page, total) => pdf('page', {page, total}),
   }
 }
@@ -142,20 +166,38 @@ async function pageError(code: string, status: number, locale: Locale) {
   })
 }
 
-/** The CV — a plain link, no JavaScript involved. */
+/**
+ * Both printable documents — plain links, no JavaScript involved.
+ *
+ * `doc=cv` is the full document, `doc=qr` the one-page card whose whole job is
+ * to hand the reader back to the web version: it carries the QR code and the
+ * address, resolved from this very request rather than from a constant.
+ */
 export async function GET(request: Request) {
   const url = new URL(request.url)
-  if ((url.searchParams.get('doc') ?? 'cv') !== 'cv') return jsonError('bad_request', 400)
+  const doc = url.searchParams.get('doc') ?? 'cv'
+  if (doc !== 'cv' && doc !== 'qr') return jsonError('bad_request', 400)
 
   const locale = readLocale(url.searchParams.get('locale'))
   const {id, fresh} = await session()
   if (!checkRenderLimit(id)) return jsonError('rate_limited', 429)
 
   registerPdfFonts()
+
+  const name = cv.person.name
+
+  if (doc === 'qr') {
+    const labels = await qrLabels(locale)
+    const body = await renderToBuffer(
+      <QrPdf locale={locale} labels={labels} url={siteUrl(request, locale)} />
+    )
+    return pdfResponse(body, pdfFilename(name, labels.docTitle, locale), fresh, id)
+  }
+
   const labels = await cvLabels(locale)
   const body = await renderToBuffer(<CvPdf locale={locale} labels={labels} />)
 
-  return pdfResponse(body, pdfFilename(cv.person.name, labels.docTitle, locale), fresh, id)
+  return pdfResponse(body, pdfFilename(name, labels.docTitle, locale), fresh, id)
 }
 
 type SummaryPayload = {

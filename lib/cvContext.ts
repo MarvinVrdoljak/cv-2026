@@ -34,7 +34,7 @@ export function buildCvContext(locale: Locale) {
     skills: cv.skills.map((s) => ({
       id: s.id,
       label: s.label[locale],
-      items: s.items,
+      items: s.items.map((i) => i.name),
       note: s.note ? s.note[locale] : null,
     })),
     education: cv.education.map((e) => ({

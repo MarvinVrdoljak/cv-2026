@@ -1,0 +1,40 @@
+.root {
+  display: flex;
+  flex: none;
+  align-items: center;
+
+  /* Three actions where there used to be one, and the status bar is only as
+     wide as a phone. Tight here, roomier once there is width to spend — the
+     readouts on the left shrink first (they carry `overflow: hidden`). */
+  gap: var(--spacing-8);
+}
+
+.link {
+  flex: none;
+  appearance: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+
+  /* Stated, not inherited: two of the three are anchors and get the underline
+     from the user agent, the share action is a button and would not — and then
+     one of three actions looks like a different kind of thing. */
+  text-decoration: underline;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.link:hover {
+  color: var(--color-text);
+}
+
+@media (--bp-medium-up) {
+  .root {
+    gap: var(--spacing-16);
+  }
+}

@@ -15,7 +15,13 @@
     "sectionsLabel": "Sections",
     "localeLabel": "Language",
     "pdf": "PDF",
-    "pdfLabel": "Open the CV as a PDF"
+    "pdfLabel": "Open the CV as a PDF",
+    "qr": "QR Code",
+    "qrLabel": "Open the one-page profile with QR code as a PDF",
+    "share": "Share",
+    "shareLabel": "Share this page",
+    "shareCopyLabel": "Copy the link to this page",
+    "shareCopied": "Copied"
   },
   "sections": {
     "profile": "Profile",
@@ -98,7 +104,11 @@
     "page": "Page {page}/{total}",
     "generated": "Created {date}",
     "markedCount": "{count, plural, =1 {# entry} other {# entries}}",
-    "assessmentMissing": "No assessment was produced."
+    "assessmentMissing": "No assessment was produced.",
+    "qrTitle": "Profile",
+    "qrScanLabel": "Scan to open",
+    "qrScanTitle": "Interactive CV",
+    "qrScanHint": "Paste a job ad and read the match, ask about individual roles, mark entries."
   },
   "status": {
     "label": "System status",

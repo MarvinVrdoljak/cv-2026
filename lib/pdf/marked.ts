@@ -72,7 +72,7 @@ function everyEntry({locale, present, sections}: Options): MarkedItem[] {
       meta: null,
       title: group.label[locale],
       detail: group.note ? group.note[locale] : null,
-      items: group.items,
+      items: group.items.map((i) => i.name),
     })
   }
 

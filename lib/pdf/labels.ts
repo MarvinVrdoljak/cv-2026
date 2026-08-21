@@ -23,6 +23,21 @@ export type CvPdfLabels = {
   pageLabel: (current: number, total: number) => string
 }
 
+export type QrPdfLabels = {
+  /** "Kurzprofil" — names the card in the running foot and the metadata. */
+  docTitle: string
+  sections: PdfSectionLabels
+  born: string
+  present: string
+  duration: (years: number, months: number) => string
+  /** Mono kicker above the scan band, in the accent — the one call to action. */
+  scanLabel: string
+  scanTitle: string
+  /** One sentence on what waits behind the code. Never a promise, a list. */
+  scanHint: string
+  pageLabel: (current: number, total: number) => string
+}
+
 export type SummaryPdfLabels = {
   docTitle: string
   /** "Lebenslauf" — the source document the marks were taken from. */

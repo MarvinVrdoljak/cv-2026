@@ -60,7 +60,15 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   echten Readouts, Tastaturkürzel (⌘/Ctrl K, „/", Esc) über `KeyBindings`. Die Leiste zeigt
   nur, was es gibt: „Assistent" (nicht „Status" — sonst bleibt offen, _was_ bereit ist) immer,
   Modell/Antwortzeit erst nach einer Anfrage, Markierungen erst wenn markiert wurde (per
-  `:has()` aus AppShell, also ohne JS).
+  `:has()` aus AppShell, also ohne JS). Am Ende der Leiste die Wege hinaus
+  ([DocumentLinks](components/shell/DocumentLinks.tsx)), in der Reihenfolge, wie viel sie vom
+  Leser verlangen: Teilen · QR-Code · PDF. Alle drei tragen die Unterstreichung **explizit** — zwei
+  sind Anker und bekämen sie vom Browser, „Teilen" ist ein Button und bekäme sie nicht, und dann
+  sieht eine von drei Aktionen aus wie eine andere Art Ding. QR-Code und PDF sind gewöhnliche Links
+  (serverseitig, ohne JS), „Teilen" ist [ShareLink](components/shell/ShareLink.tsx) — es gibt
+  kein Markup für ein Share-Sheet. Der Knopf rendert **nichts**, bis ein Effekt geklärt hat, ob
+  `navigator.share` oder wenigstens die Zwischenablage da ist: dieselbe Regel wie sonst in der
+  Leiste (nur zeigen, was es gibt), und der no-JS-Fall fällt ohne zweiten Codepfad heraus.
 - **Tastatur & Viewport (mobil):** Die Chat-Leiste liegt fix am unteren Rand — iOS lässt die
   Bildschirmtastatur darüber gleiten, weil das Layout-Viewport seine Höhe behält. Deshalb
   veröffentlicht [ViewportSync](components/shell/ViewportSync.tsx) das _visuelle_ Viewport als
@@ -95,10 +103,11 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
 - **Farbe/Motion:** ein Akzent nur für aktive Zustände; Palette rechnerisch gegen WCAG AA
   geprüft (Light + Dark). Motion 150–250 ms mit eigenen Kurven, `prefers-reduced-motion`
   global respektiert. Dark Mode folgt der Umgebung (kein Umschalter — laut Briefing verboten).
-- **PDF (Hauptweg auf Papier):** [app/api/pdf/route.tsx](app/api/pdf/route.tsx) setzt beide
+- **PDF (Hauptweg auf Papier):** [app/api/pdf/route.tsx](app/api/pdf/route.tsx) setzt alle drei
   Dokumente serverseitig mit `@react-pdf/renderer` — aus derselben einen Quelle wie der
-  Bildschirm. `GET /api/pdf?doc=cv&locale=de` liefert den Lebenslauf (deshalb ein normaler
-  Link in der Statusleiste: **funktioniert ohne JS**), `POST /api/pdf` die Notiz-Zusammen-
+  Bildschirm. `GET /api/pdf?doc=cv&locale=de` liefert den Lebenslauf, `GET …?doc=qr` die
+  einseitige Karte (deshalb normale Links in der Statusleiste: **funktionieren ohne JS**),
+  `POST /api/pdf` die Notiz-Zusammen-
   fassung — sie muss markierte ids und die Einordnung mitschicken, die nur im Client liegen
   und in keiner URL etwas zu suchen haben. Der Dialog schickt dafür ein **Formular** mit
   `target="_blank"` statt eines `fetch`: dann ist es eine echte Navigation, der Tab landet auf
@@ -107,9 +116,37 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   (letzteres für programmatische Aufrufe) — und meldet Fehler entsprechend: als lesbare
   HTML-Seite bei einer Navigation, als JSON bei einem `fetch`. Dokumente in
   [lib/pdf/](lib/pdf): `frame.tsx` (Seite, Fuß, Abschnittsköpfe, id-Spalte), `CvPdf.tsx`,
-  `SummaryPdf.tsx`, Papier-Tokens in `theme.ts`, Schriften in `fonts.ts`. Strings kommen als
-  Label-Objekt aus der Route ([labels.ts](lib/pdf/labels.ts)) — die Dokumente bleiben reine
-  Funktionen von Daten + Labels.
+  `QrPdf.tsx`, `SummaryPdf.tsx`, Papier-Tokens in `theme.ts`, Schriften in `fonts.ts`. Strings
+  kommen als Label-Objekt aus der Route ([labels.ts](lib/pdf/labels.ts)) — die Dokumente
+  bleiben reine Funktionen von Daten + Labels.
+- **Kurzprofil-Karte (`doc=qr`):** [lib/pdf/QrPdf.tsx](lib/pdf/QrPdf.tsx) — **eine** Seite, die
+  den Leser zurück ins Web schicken soll: Kopf, Kurzprofil, die Stationen (Mono-Datumsspalte,
+  Rolle, Arbeitgeberzeile), die ausgewählten Kenntnisse als Chips, unten ein Band mit QR-Code
+  und Adresse. Highlights, Ausbildung, Sprachen und der lange Rest der Kenntnisse bleiben dem
+  vollen Dokument. Zwei Regeln halten die Karte ruhig — beim Erweitern einhalten: **eine Stimme
+  pro Zeile** (Datum, Rolle und Arbeitgeber je auf ihrer eigenen Zeile; auf eine Zeile gedrängt
+  waren es drei konkurrierende Signale) und **keine Farbe** (der Akzent ist für aktive Zustände
+  am Bildschirm — auf einem Blatt mit einer Handlungsaufforderung liest eine rote Zeile als
+  Warnung). Das Band hängt über `spacer` (`flexGrow`) am unteren Rand statt am Textende; passt
+  es nicht mehr, rutscht es auf ein zweites Blatt statt zu kollidieren. Aktuell ~40 pt Luft —
+  beim Erweitern die Seitenzahl prüfen (`/Count` im PDF), eine zweiseitige „einseitige Karte"
+  ist ein Fehler.
+- **Auswahl der Kenntnisse:** `card: true` an einem `CvSkillItem` in [data/cv.ts](data/cv.ts)
+  entscheidet, was auf die Karte kommt (~20 Begriffe, das tägliche Handwerk). Das Flag steht
+  **am Begriff**, nicht als zweite Liste — sonst driftet die Auswahl von den Daten weg. Der
+  Modellkontext ([cvContext.ts](lib/cvContext.ts)) sieht weiterhin **alle** Begriffe: das Flag
+  ist eine Entscheidung über Papier, nicht über Wahrheit. Der Chip-Block ist der **einzige**
+  Block der Karte ohne id-Spalte und läuft deshalb über die volle Breite: ein halbes Dutzend
+  Gruppen-ids neben einer Chip-Wolke zeigt auf nichts Bestimmtes — die Chips sind nicht je ein
+  Eintrag. Die Gruppenlabels und die ehrlichen Notizen stehen am Bildschirm.
+- **QR-Code:** [lib/pdf/qr.ts](lib/pdf/qr.ts) macht aus der URL **einen** SVG-Pfad
+  (`qrcode-generator`, Fehlerkorrektur M, Ruhezone 4 Module). Ein `<Rect>` je Modul wären
+  tausend Knoten und die Kantenglättung hinterlässt Haarrisse dazwischen — deshalb wird jeder
+  waagerechte Lauf dunkler Module ein Teilpfad. Koordinaten in Modulen, Druckgröße kommt aus
+  der `viewBox`.
+- **Adresse:** [lib/siteUrl.ts](lib/siteUrl.ts) leitet sie aus dem Request ab (`localePrefix:
+'as-needed'` wird gespiegelt), damit eine Preview-Deployment einen QR auf sich selbst druckt.
+  `SITE_URL` überschreibt, wenn der öffentliche Name nicht der Host ist, den die App sieht.
 - **Papier-Konventionen** (in `theme.ts` festgehalten, beim Erweitern einhalten): **vier
   Schriftgrößen** für das ganze Dokument (`mono` Interface · `small` Sekundärtext · `body`
   Fließtext · `title` Eintragstitel) — Hierarchie über Gewicht, Auszeichnung und Abstand, nicht
@@ -172,7 +209,8 @@ Alle vier laufen aktuell fehlerfrei durch.
 ## Umgebung
 
 `.env.local` mit `OPENAI_API_KEY=…` anlegen (nicht im Repo, nie als `NEXT_PUBLIC_*`).
-Optional: `OPENAI_MODEL` überschreibt die Modellwahl. Ohne diese Variable folgt der Default
+Optional: `SITE_URL` fixiert die Adresse, die QR-Karte und Share-Sheet ausgeben (ohne die
+Variable kommt sie aus dem Request). `OPENAI_MODEL` überschreibt die Modellwahl. Ohne diese Variable folgt der Default
 der Umgebung: Produktion (`NODE_ENV=production`) nutzt `gpt-4o` (stärkeres Paraphrasen-Reasoning
 hält den Abgleich ehrlich, ohne gefällig zu werden), Entwicklung bleibt auf dem schnellen,
 günstigen `gpt-4o-mini`. Ohne Key liefert die Route `503` und die Oberfläche zeigt
@@ -226,6 +264,8 @@ ein weiteres Inline-`<script>` ergänzt, muss ihm den Nonce mitgeben, sonst bloc
 - **`next.config.mjs`** braucht dafür beides: `serverExternalPackages` für den Renderer und
   `outputFileTracingIncludes` für `./assets/**`, weil die Route die Dateien erst zur Laufzeit
   über `process.cwd()` liest.
+- **`qrcode-generator`** ist die einzige neue Laufzeit-Abhängigkeit (kein eigenes `node_modules`,
+  eigene Typen, MIT). Sie liefert nur die Modul-Matrix; das Zeichnen macht `lib/pdf/qr.ts`.
 - **Zwei Eigenheiten von `@react-pdf/renderer`** (beide teuer erkauft, nicht „aufräumen"):
   `fixed`-Elemente müssen **vor** dem Seiteninhalt stehen, sonst werden sie nicht gezeichnet;
   und ein dynamischer Textknoten (`render`-Prop) darf nicht mit `bottom` positioniert werden —

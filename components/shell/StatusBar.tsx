@@ -1,6 +1,6 @@
 import {getTranslations} from 'next-intl/server'
 import type {Locale} from '@/i18n/routing'
-import {PdfLink} from './PdfLink'
+import {DocumentLinks} from './DocumentLinks'
 import {StatusReadouts} from './StatusReadouts'
 import styles from './StatusBar.module.css'
 
@@ -37,7 +37,7 @@ export async function StatusBar({locale}: StatusBarProps) {
           </div>
         </dl>
 
-        <PdfLink locale={locale} />
+        <DocumentLinks locale={locale} />
       </div>
     </footer>
   )

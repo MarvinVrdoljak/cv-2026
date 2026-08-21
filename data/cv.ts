@@ -43,10 +43,24 @@ export type CvExperience = {
   stack: string[]
 }
 
+export type CvSkillItem = {
+  /** The term itself, spelled the way it should be searched for. */
+  name: string
+  /**
+   * Print this one on the one-page card (`/api/pdf?doc=qr`).
+   *
+   * The card has room for about twenty terms, so it carries the ones that are
+   * daily work rather than everything that is true. Which ones is a judgement
+   * about emphasis, not about the data — so it is a flag on the item and stays
+   * next to it, instead of a second list somewhere that can drift.
+   */
+  card?: true
+}
+
 export type CvSkillGroup = {
   id: string
   label: LocalizedText
-  items: string[]
+  items: CvSkillItem[]
   /** Optional one-line qualification of depth, in prose, never a bar. */
   note: LocalizedText | null
 }
@@ -268,24 +282,36 @@ export const cv: Cv = {
     },
   ],
 
+  /* `card: true` marks the terms the one-page card prints — the daily work.
+     Left off on purpose: the generic umbrellas (Frontend-Entwicklung,
+     Webentwicklung) because the concrete frameworks next to them say it
+     better; Three.js and Claude Code as too narrow for a first impression;
+     SQL/SQLite/MongoDB because one database is the honest claim here (see the
+     note); and the four clouds, because the note below says there is no
+     enterprise-infrastructure specialisation and a card cannot carry a note. */
   skills: [
     {
       id: 'skl-01',
       label: {de: 'Sprachen & Fundament', en: 'Languages & fundamentals'},
-      items: ['TypeScript', 'JavaScript', 'HTML', 'CSS'],
+      items: [
+        {name: 'TypeScript', card: true},
+        {name: 'JavaScript', card: true},
+        {name: 'HTML', card: true},
+        {name: 'CSS', card: true},
+      ],
       note: null,
     },
     {
       id: 'skl-02',
       label: {de: 'Frameworks & Frontend', en: 'Frameworks & frontend'},
       items: [
-        'React.js',
-        'Next.js',
-        'React Native',
-        'Expo',
-        'Three.js',
-        'Frontend-Entwicklung',
-        'Webentwicklung',
+        {name: 'React.js', card: true},
+        {name: 'Next.js', card: true},
+        {name: 'React Native', card: true},
+        {name: 'Expo', card: true},
+        {name: 'Three.js'},
+        {name: 'Frontend-Entwicklung'},
+        {name: 'Webentwicklung'},
       ],
       note: null,
     },
@@ -293,11 +319,11 @@ export const cv: Cv = {
       id: 'skl-03',
       label: {de: 'KI-gestützte Entwicklung', en: 'AI-assisted development'},
       items: [
-        'Künstliche Intelligenz (KI)',
-        'Große Sprachmodelle (LLM)',
-        'KI-gestützte Softwareentwicklung',
-        'Prompt-Engineering',
-        'Claude Code',
+        {name: 'Künstliche Intelligenz (KI)', card: true},
+        {name: 'Große Sprachmodelle (LLM)', card: true},
+        {name: 'KI-gestützte Softwareentwicklung', card: true},
+        {name: 'Prompt-Engineering'},
+        {name: 'Claude Code'},
       ],
       note: null,
     },
@@ -305,24 +331,32 @@ export const cv: Cv = {
       id: 'skl-04',
       label: {de: 'Design & Konzeption', en: 'Design & concept'},
       items: [
-        'User Experience (UX)',
-        'Konzeption',
-        'Wireframing',
-        'Figma',
-        'Digitale Barrierefreiheit',
+        {name: 'User Experience (UX)', card: true},
+        {name: 'Konzeption', card: true},
+        {name: 'Wireframing', card: true},
+        {name: 'Figma', card: true},
+        {name: 'Digitale Barrierefreiheit', card: true},
       ],
       note: null,
     },
     {
       id: 'skl-05',
       label: {de: 'Werkzeuge & Arbeitsweise', en: 'Tooling & ways of working'},
-      items: ['WordPress', 'Payload CMS', 'REST-API', 'Git', 'CI/CD', 'Vercel', 'Scrum'],
+      items: [
+        {name: 'WordPress', card: true},
+        {name: 'Payload CMS', card: true},
+        {name: 'REST-API', card: true},
+        {name: 'Git', card: true},
+        {name: 'CI/CD'},
+        {name: 'Vercel'},
+        {name: 'Scrum', card: true},
+      ],
       note: null,
     },
     {
       id: 'skl-06',
       label: {de: 'Datenbanken', en: 'Databases'},
-      items: ['SQL', 'PostgreSQL', 'SQLite', 'MongoDB'],
+      items: [{name: 'SQL'}, {name: 'PostgreSQL'}, {name: 'SQLite'}, {name: 'MongoDB'}],
       note: {
         de: 'Kein Datenbank-Spezialist, aber das Aufsetzen und Bearbeiten von Datenbanken gelingt problemlos.',
         en: 'No database specialist, but setting up and working with databases is no problem.',
@@ -332,11 +366,11 @@ export const cv: Cv = {
       id: 'skl-07',
       label: {de: 'Cloud & Betrieb', en: 'Cloud & operations'},
       items: [
-        'Microsoft Azure',
-        'Amazon Web Services (AWS)',
-        'Google Cloud',
-        'Cloudflare',
-        'Expo Application Services (EAS)',
+        {name: 'Microsoft Azure'},
+        {name: 'Amazon Web Services (AWS)'},
+        {name: 'Google Cloud'},
+        {name: 'Cloudflare'},
+        {name: 'Expo Application Services (EAS)'},
       ],
       note: {
         de: 'Projektbezogen eingesetzt, solide im Anwendungsbetrieb – ohne Spezialisierung auf große Enterprise-Infrastruktur.',

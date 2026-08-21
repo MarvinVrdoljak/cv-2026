@@ -15,7 +15,13 @@
     "sectionsLabel": "Abschnitte",
     "localeLabel": "Sprache",
     "pdf": "PDF",
-    "pdfLabel": "Lebenslauf als PDF öffnen"
+    "pdfLabel": "Lebenslauf als PDF öffnen",
+    "qr": "QR-Code",
+    "qrLabel": "Kurzprofil mit QR-Code als PDF öffnen",
+    "share": "Teilen",
+    "shareLabel": "Diese Seite teilen",
+    "shareCopyLabel": "Link zu dieser Seite kopieren",
+    "shareCopied": "Kopiert"
   },
   "sections": {
     "profile": "Kurzprofil",
@@ -98,7 +104,11 @@
     "page": "Seite {page}/{total}",
     "generated": "Erstellt {date}",
     "markedCount": "{count, plural, =1 {# Eintrag} other {# Einträge}}",
-    "assessmentMissing": "Keine Einordnung erzeugt."
+    "assessmentMissing": "Keine Einordnung erzeugt.",
+    "qrTitle": "Kurzprofil",
+    "qrScanLabel": "Zum Scannen",
+    "qrScanTitle": "Interaktiver Lebenslauf",
+    "qrScanHint": "Stellenanzeige einfügen und den Abgleich lesen, zu einzelnen Stationen nachfragen, Stellen markieren."
   },
   "status": {
     "label": "Systemstatus",

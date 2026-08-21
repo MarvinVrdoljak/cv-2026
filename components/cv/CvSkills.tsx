@@ -33,8 +33,8 @@ export async function CvSkills({locale}: CvSkillsProps) {
             <h3 className={styles.label}>{group.label[locale]}</h3>
             <ul className={styles.items} aria-label={group.label[locale]}>
               {group.items.map((item) => (
-                <li className={styles.item} key={item}>
-                  {item}
+                <li className={styles.item} key={item.name}>
+                  {item.name}
                 </li>
               ))}
             </ul>

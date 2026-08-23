@@ -1,0 +1,138 @@
+/* Global .bar-menu atom — a value in the instrument chrome that opens.
+
+   Used by the display switch (a client component) and by the language switch
+   (server-rendered links inside the top bar), which is why the look is an atom
+   and not a module: both halves have to be the same object, and one of them
+   must render without JavaScript.
+
+   Built on <details>/<summary> for exactly that reason — it opens, closes and
+   takes the keyboard with the JS switched off, so the language switch never
+   depends on hydration. The panel is a drawer pulled out of the bar: the
+   control stretches to the full bar height, so the panel's top edge lands
+   exactly on the bar's own hairline and continues it. */
+@layer components {
+  .bar-menu {
+    position: relative;
+    display: flex;
+    flex: none;
+    align-self: stretch;
+    align-items: center;
+  }
+
+  /* Deliberately not `display: flex` — WebKit stops toggling a <summary> that
+     is laid out as a flex container, so the row inside does the flexing. */
+  .bar-menu-summary {
+    height: 100%;
+    padding-inline: var(--spacing-6);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    cursor: pointer;
+
+    /* The UA's disclosure triangle, twice: Firefox reads list-style, WebKit
+       needs its own pseudo. Ours is .bar-menu-caret. */
+    list-style: none;
+    transition: color var(--duration-fast) var(--ease-standard);
+  }
+
+  .bar-menu-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .bar-menu-summary:hover {
+    color: var(--color-text);
+  }
+
+  .bar-menu-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-6);
+    height: 100%;
+  }
+
+  /* Open: the control holds the ink as long as its panel is out. No background
+     — the panel hanging off the bar already says which one is open. */
+  .bar-menu[open] .bar-menu-summary {
+    color: var(--color-text);
+  }
+
+  /* Two hairlines meeting at a corner, not an icon: the same drawn-with-borders
+     language as the rest of the chrome. */
+  .bar-menu-caret {
+    width: 4px;
+    height: 4px;
+    border-right: 1px solid currentcolor;
+    border-bottom: 1px solid currentcolor;
+    transform: translateY(-1px) rotate(45deg);
+    transition: transform var(--duration-base) var(--ease-standard);
+  }
+
+  .bar-menu[open] .bar-menu-caret {
+    transform: translateY(1px) rotate(225deg);
+  }
+
+  .bar-menu-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 100%;
+    padding: var(--spacing-4);
+    border: 1px solid var(--color-rule-strong);
+
+    /* No top edge and no top radii: the bar's own hairline is this panel's */
+    border-top: 0;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+    background: var(--color-surface);
+    animation: bar-menu-open var(--duration-fast) var(--ease-entrance);
+  }
+
+  /* One row, whether it is a button (display) or a link (language) */
+  .bar-menu-option {
+    appearance: none;
+    display: block;
+    width: 100%;
+    padding: var(--spacing-6) var(--spacing-10);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: none;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    letter-spacing: var(--tracking-label);
+    text-align: left;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition:
+      color var(--duration-fast) var(--ease-standard),
+      background var(--duration-fast) var(--ease-standard);
+  }
+
+  .bar-menu-option:hover {
+    background: var(--color-surface-sunken);
+    color: var(--color-text);
+  }
+
+  /* The one place a row holds the accent: it marks what is set. Two attributes
+     because a pressed button and a current link are the same fact here. */
+  .bar-menu-option[aria-pressed='true'],
+  .bar-menu-option[aria-current='true'] {
+    background: var(--color-accent-wash);
+    color: var(--color-accent);
+  }
+}
+
+/* Slides out of the bar rather than appearing on top of it. Killed by the
+   global prefers-reduced-motion rule in base.css. */
+@keyframes bar-menu-open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}

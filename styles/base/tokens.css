@@ -7,6 +7,11 @@
    marked elements, streaming indicator). Never decorative.
    ============================================================ */
 :root {
+  /* Lets the parts we do not paint — scrollbars, the caret, the checkbox the
+     UA draws before appearance:none takes it — follow the same decision as the
+     palette below. Narrowed to one value where the reader overrode it. */
+  color-scheme: light dark;
+
   /* Colors */
   --color-black: #000;
   --color-white: #fff;
@@ -158,10 +163,18 @@
   }
 }
 
-/* No toggle by design — the app follows the environment. Same relationships,
-   inverted ground: paper becomes ink, the accent lifts to stay legible. */
+/* The app follows the environment, and that stays the default; the switch in
+   the top bar (see lib/theme.ts) overrides it for a reader whose system says
+   one thing and whose eyes want the other. Same relationships either way,
+   inverted ground: paper becomes ink, the accent lifts to stay legible.
+
+   Two guards, one palette. The attribute is stamped only once someone has
+   chosen; while they let the environment decide it is absent — which is also
+   the no-JavaScript case, where the media query is the only thing that runs. A
+   media query cannot join a selector list, so the values stand twice: keep the
+   two blocks in step. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --color-background: #101013;
     --color-surface: #17171b;
     --color-surface-sunken: #1d1d22;
@@ -177,4 +190,28 @@
     --color-primary-hover: #fff;
     --color-on-primary: #101013;
   }
+}
+
+/* Chosen, therefore last word: outranks the query above in either direction. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-background: #101013;
+  --color-surface: #17171b;
+  --color-surface-sunken: #1d1d22;
+  --color-text: #eceae5;
+  --color-text-muted: #9d9da6;
+  --color-rule: #26262c;
+  --color-rule-strong: #3a3a42;
+  --color-border-control: #74747d;
+  --color-accent: #ff7a4d;
+  --color-accent-strong: #ff9670;
+  --color-accent-wash: #2a1610;
+  --color-primary: #eceae5;
+  --color-primary-hover: #fff;
+  --color-on-primary: #101013;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
 }

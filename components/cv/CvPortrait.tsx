@@ -3,6 +3,7 @@
 import {useEffect, useRef} from 'react'
 import Image from 'next/image'
 import {cv} from '@/data/cv'
+import {watchTheme} from '@/lib/theme'
 import styles from './CvPortrait.module.css'
 
 function hexToRgb(value: string): [number, number, number] {
@@ -334,11 +335,13 @@ export function CvPortrait() {
       window.clearTimeout(resizeTimer)
       resizeTimer = window.setTimeout(sample, 150)
     }
-    const scheme = window.matchMedia('(prefers-color-scheme: dark)')
-    const onScheme = () => {
+
+    // The tints are mixed from the token values, so they have to be remixed
+    // whenever the palette changes — the environment or the top bar's switch.
+    const stopWatchingTheme = watchTheme(() => {
       palette()
       draw()
-    }
+    })
 
     source.onload = sample
     source.src = photo
@@ -350,7 +353,6 @@ export function CvPortrait() {
     figure.addEventListener('focusin', onFocusIn)
     figure.addEventListener('focusout', onFocusOut)
     window.addEventListener('resize', onResize)
-    scheme.addEventListener('change', onScheme)
 
     return () => {
       if (raf) cancelAnimationFrame(raf)
@@ -362,7 +364,7 @@ export function CvPortrait() {
       figure.removeEventListener('focusin', onFocusIn)
       figure.removeEventListener('focusout', onFocusOut)
       window.removeEventListener('resize', onResize)
-      scheme.removeEventListener('change', onScheme)
+      stopWatchingTheme()
       delete figure.dataset.matrix
     }
   }, [photo])

@@ -1,42 +1,11 @@
-import '@/styles/globals.css'
-
 import React from 'react'
-import type {Viewport} from 'next'
-import {headers} from 'next/headers'
 import {notFound} from 'next/navigation'
 import {NextIntlClientProvider, hasLocale} from 'next-intl'
 import {getTranslations, setRequestLocale} from 'next-intl/server'
-import {IBM_Plex_Mono, IBM_Plex_Sans} from 'next/font/google'
 import {routing} from '@/i18n/routing'
+import {DocumentLocale} from '@/components/app/DocumentLocale'
 import {FaviconTheme} from '@/components/app/FaviconTheme'
 import {Preloader} from '@/components/app/Preloader'
-
-// Two self-hosted families exposed as CSS variables consumed by tokens.css.
-// The sans carries content, the mono carries interface — that switch is the
-// central design device, so both are loaded up front, never swapped later.
-const plexSans = IBM_Plex_Sans({
-  subsets: ['latin'],
-  display: 'swap',
-  weight: ['400', '500', '600'],
-  variable: '--font-sans',
-})
-
-const plexMono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  display: 'swap',
-  weight: ['400', '500'],
-  variable: '--font-plex-mono',
-})
-
-// The chat is a bar at the bottom edge on a phone, so the on-screen keyboard
-// must not be allowed to slide over it: this asks the browser to shrink the
-// layout viewport instead, which moves the fixed chrome up with it. Chrome and
-// Android honour it; Safari ignores it, which is what ViewportSync covers.
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  interactiveWidget: 'resizes-content',
-}
 
 // Statically generate a layout per locale.
 export function generateStaticParams() {
@@ -94,6 +63,11 @@ export async function generateMetadata({params}: Omit<LocaleLayoutProps, 'childr
   }
 }
 
+/**
+ * The locale's own layer. <html>, <body>, the fonts and the pre-paint script
+ * live one level up in the root layout, on purpose: this subtree re-renders on
+ * a language switch, and an inline script must not (see app/layout.tsx).
+ */
 export default async function LocaleLayout({children, params}: LocaleLayoutProps) {
   const {locale} = await params
 
@@ -104,32 +78,14 @@ export default async function LocaleLayout({children, params}: LocaleLayoutProps
   // Enables static rendering for this locale.
   setRequestLocale(locale)
 
-  // The middleware minted a per-request nonce; the one inline script we own
-  // must carry it so the strict production CSP lets it run.
-  const nonce = (await headers()).get('x-nonce') ?? undefined
-
   return (
-    // suppressHydrationWarning: the inline script below stamps data-js on <html>
-    // before hydration, so the server markup and client attributes differ by
-    // design — this scopes the allowance to <html> only.
-    <html
-      lang={locale}
-      className={`${plexSans.variable} ${plexMono.variable}`}
-      suppressHydrationWarning
-    >
-      <body>
-        {/* Flag JS before first paint so the preloader shows only with JS on
-            (no-JS keeps the CV readable, never a stuck overlay). */}
-        <script
-          nonce={nonce}
-          dangerouslySetInnerHTML={{__html: "document.documentElement.setAttribute('data-js','1')"}}
-        />
-        <FaviconTheme />
-        <NextIntlClientProvider>
-          {children}
-          <Preloader />
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <>
+      <DocumentLocale locale={locale} />
+      <FaviconTheme />
+      <NextIntlClientProvider>
+        {children}
+        <Preloader />
+      </NextIntlClientProvider>
+    </>
   )
 }

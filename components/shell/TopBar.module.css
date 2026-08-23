@@ -29,12 +29,18 @@
   min-width: 0;
 }
 
+/* The one thing in this bar that may give way: on a 320px screen the label,
+   the display switch and the language switch do not all fit, and the label is
+   the part the reader can spare — the name stands in the document 44px below.
+   So it may shrink, unlike its siblings in this bar. */
 .identityLabel {
-  flex: none;
+  overflow: hidden;
   font-family: var(--font-mono);
   font-size: var(--font-size-xs);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   color: var(--color-text-muted);
 }
 
@@ -83,44 +89,16 @@
   color: var(--color-text);
 }
 
-.locales {
+/* Display switch and language switch, one object — two menus that print
+   their current value and open downwards. Stretched, not centred: each menu
+   fills the bar's height, so its panel hangs off the bar's own hairline
+   (see styles/components/bar-menu.css) and a thumb gets the full 44px. */
+.settings {
   display: flex;
   flex: none;
+  align-self: stretch;
   align-items: center;
-  gap: var(--spacing-8);
-}
-
-.localeLabel {
-  display: none;
-  font-family: var(--font-mono);
-  font-size: var(--font-size-xs);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-
-.localeLink {
-  padding: var(--spacing-2) var(--spacing-6);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-mono);
-  font-size: var(--font-size-xs);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--color-text-muted);
-  transition:
-    color var(--duration-fast) var(--ease-standard),
-    background var(--duration-fast) var(--ease-standard);
-}
-
-.localeLink:hover {
-  color: var(--color-text);
-}
-
-/* The one place a link is allowed to hold the accent: it marks current state */
-.localeLink[aria-current='true'] {
-  background: var(--color-accent-wash);
-  color: var(--color-accent);
+  gap: var(--spacing-4);
 }
 
 @media (--bp-medium-up) {
@@ -129,10 +107,6 @@
   }
 
   .identityName {
-    display: block;
-  }
-
-  .localeLabel {
     display: block;
   }
 }

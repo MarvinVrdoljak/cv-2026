@@ -15,7 +15,12 @@
 }
 
 @media print {
-  :root {
+  /* Both halves of the theme switch's stamp, because the guards in tokens.css
+     carry an attribute and would otherwise outweigh a bare root selector
+     here. Same specificity, later in the cascade — paper is paper, whatever
+     the reader chose for the screen. */
+  :root:not([data-theme]),
+  :root[data-theme] {
     --color-background: #fff;
     --color-surface: #fff;
     --color-surface-sunken: #fff;

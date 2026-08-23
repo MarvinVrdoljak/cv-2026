@@ -1,10 +1,15 @@
 'use client'
 
 import {useEffect, useState} from 'react'
+import {resolveTheme, watchTheme} from '@/lib/theme'
 
 /**
  * Renders the SVG favicon link and points it at the variant that matches the
  * environment — dark tile on light chrome, light tile on dark chrome.
+ *
+ * Which variant that is comes from lib/theme.ts, so an explicit choice in the
+ * top bar moves the favicon with the page instead of leaving it on whatever the
+ * system prefers.
  *
  * public/favicon.svg already carries the switch itself via prefers-color-scheme,
  * which Firefox and Safari honour. Chromium does not evaluate media queries
@@ -21,12 +26,8 @@ export function FaviconTheme() {
   const [dark, setDark] = useState(false)
 
   useEffect(() => {
-    const query = window.matchMedia('(prefers-color-scheme: dark)')
-    const sync = () => setDark(query.matches)
-
-    sync()
-    query.addEventListener('change', sync)
-    return () => query.removeEventListener('change', sync)
+    setDark(resolveTheme() === 'dark')
+    return watchTheme((theme) => setDark(theme === 'dark'))
   }, [])
 
   // React 19 hoists this into <head>.

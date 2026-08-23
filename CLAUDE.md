@@ -95,6 +95,24 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   tragen, sonst klappt es nie ganz zu. Nach dem Senden geht der Fokus zurück ins Eingabefeld
   und `data-open` hält das Panel während des Streamens offen — sonst klappte es beim Senden zu
   (der Senden-Knopf wird `disabled` und verliert den Fokus).
+- **Zwei Layouts, und das ist der Punkt:** [app/layout.tsx](app/layout.tsx) trägt `<html>`,
+  `<body>`, die Schriften und das **einzige eigene Inline-Skript** (JS-Flag `data-js` für den
+  Preloader + gespeicherte Ansicht, siehe [lib/theme.ts](lib/theme.ts));
+  [app/[locale]/layout.tsx](app/[locale]/layout.tsx) trägt nur Metadaten, `setRequestLocale` und
+  die Provider. Grund: das Root-Layout liegt **über** dem `[locale]`-Segment und wird beim
+  Sprachwechsel **nicht** neu gerendert. Läge das Skript im Locale-Layout, würde React es bei
+  jedem Sprachwechsel client-seitig rendern — und warnt dann zu Recht („Encountered a script tag
+  while rendering React component"), denn dort läuft es nie. **A/B im Browser verifiziert**
+  (CDP, Dev-Server): Skript im Locale-Layout ⇒ Warnung, Skript im Root-Layout ⇒ keine, in beiden
+  Fällen eine echte Client-Navigation (Marker auf `window` überlebt). Das Skript **muss** ein
+  rohes Tag bleiben, das der Parser an der Stelle ausführt: `next/script`
+  `beforeInteractive` schiebt den Code nur in die `__next_s`-Queue, die erst nach dem ersten
+  Paint läuft (⇒ Preloader- und Palettenblitz), und ein Guard auf den `RSC`-Header geht nicht,
+  weil Next seine Routing-Header vor `headers()` wegfiltert (beides geprüft, nicht vermutet).
+  Preis des Umbaus: `<html lang>` kann nicht aus dem Segment-Param kommen. Es kommt aus
+  `x-locale`, das die [middleware.ts](middleware.ts) setzt (richtig bei **jeder**
+  Dokument-Anfrage, auch ohne JS), und nach einem Sprachwechsel im laufenden Dokument zieht
+  [DocumentLocale](components/app/DocumentLocale.tsx) das Attribut nach.
 - **Typografie:** IBM Plex Sans (Inhalt) + IBM Plex Mono (Interface) via `next/font`. Der
   Sans/Mono-Wechsel trennt Inhalt von Interface — auch im Kopf: Name in der Display-Stimme
   (Sans 600), Rolle in der Interface-Stimme (Mono, uppercase, `tracking-label`, Tinte),
@@ -102,7 +120,43 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   (`--measure: 56ch`; `1ch` = Breite der „0", breiter als das Durchschnittszeichen).
 - **Farbe/Motion:** ein Akzent nur für aktive Zustände; Palette rechnerisch gegen WCAG AA
   geprüft (Light + Dark). Motion 150–250 ms mit eigenen Kurven, `prefers-reduced-motion`
-  global respektiert. Dark Mode folgt der Umgebung (kein Umschalter — laut Briefing verboten).
+  global respektiert. Dark Mode folgt der Umgebung — und ist seit dem Umschalter (siehe unten)
+  überschreibbar.
+- **Ansichts-Umschalter:** [ThemeSwitch](components/shell/ThemeSwitch.tsx) in der Kopfleiste,
+  drei Zustände: `auto | hell | dunkel`. **Abweichung von der Projektbeschreibung** ("Kein
+  Dark-Mode-Umschalter als Feature", docs/build-prompt-cv-app.md) — auf ausdrückliche Ansage
+  hinzugefügt; der Rest der Regel bleibt: kein Icon, keine zweite Gestalt, dieselbe Form wie
+  der Sprachwechsler daneben. Beide sind [BarMenu](components/shell/BarMenu.tsx) und sitzen in
+  **einem** Cluster (`.settings`) — siehe nächster Punkt.
+- **Zwei Menüs statt fünf Chips ([BarMenu](components/shell/BarMenu.tsx), Atom in
+  [styles/components/bar-menu.css](styles/components/bar-menu.css)):** Ansicht und Sprache lagen
+  erst flach in der Leiste (`ANSICHT AUTO HELL DUNKEL · SPRACHE de en`) — fünf Wörter Interface
+  über einem Dokument, das zuerst sprechen soll. Jetzt zeigt jedes Menü **nur seinen aktuellen
+  Wert** (`HELL ▾`, `DE ▾`), der Rest liegt in der Schublade. Die Namen sind **gesprochen, nicht
+  gedruckt** (`aria-label` am `summary` als „Sprache: de", plus am Panel).
+  Es ist ein **`<details>`/`<summary>`** — genau deshalb: es öffnet, schließt und nimmt die
+  Tastatur **ohne JavaScript**, der Sprachwechsel bleibt also serverseitiges HTML mit echten
+  `Link`s (verifiziert: das Markup steht im Server-HTML). Was die Komponente ergänzt (Esc,
+  Klick daneben, Zugehen nach der Wahl) ist Kür und darf ausfallen. **`display: flex` darf nie
+  direkt auf das `summary`** — WebKit hört dann auf zu toggeln; deshalb flext `.bar-menu-row`
+  darin. Die Steuerung ist auf **volle Leistenhöhe** gestreckt (`align-self: stretch`): so
+  hängt das Panel an der Haarlinie der Leiste (kein eigener oberer Rand, Radien nur unten — es
+  liest als aus der Leiste gezogene Schublade) und ein Daumen bekommt 44px. Der Caret sind zwei
+  Haarlinien mit `border`, kein Icon — das Briefing verbietet Icons in der Navigation. Warum
+  Atom und kein CSS Module: die eine Hälfte rendert client (Ansicht), die andere server
+  (Sprache); beide müssen dasselbe Objekt sein.
+  `auto` ist die **Abwesenheit** des Stempels: nur `hell`/`dunkel` setzen `data-theme` auf
+  `<html>`, ohne Attribut entscheidet weiterhin `prefers-color-scheme` — das ist auch der
+  Fall ohne JavaScript. Die Palette steht deshalb zweimal in [tokens.css](styles/base/tokens.css)
+  (eine Media Query kann nicht in einer Selektorliste stehen): beide Blöcke synchron halten.
+  `color-scheme` wandert mit, damit Scrollbalken und Caret folgen. Der ganze Client-Zustand
+  liegt in [lib/theme.ts](lib/theme.ts) — inklusive des Inline-Skript-Schnipsels, den das
+  Layout **vor dem ersten Paint** ausführt (eine Anwendung nach der Hydration wäre ein
+  Palettenblitz) und der `watchTheme`-Subscription, die Favicon und Porträt-Canvas an
+  dieselbe Entscheidung hängt. Der Knopf rendert **nichts**, bis ein Effekt die Präferenz
+  gelesen hat — Server-Markup und erster Client-Render bleiben identisch, und der no-JS-Fall
+  fällt ohne zweiten Codepfad heraus (dieselbe Regel wie [ShareLink](components/shell/ShareLink.tsx)).
+  [print.css](styles/print.css) überschreibt beide Stempel: Papier ist Papier.
 - **PDF (Hauptweg auf Papier):** [app/api/pdf/route.tsx](app/api/pdf/route.tsx) setzt alle drei
   Dokumente serverseitig mit `@react-pdf/renderer` — aus derselben einen Quelle wie der
   Bildschirm. `GET /api/pdf?doc=cv&locale=de` liefert den Lebenslauf, `GET …?doc=qr` die
@@ -236,9 +290,9 @@ und Restore identisch zum Texteingabe-Modus funktionieren.
 Prod strikt (`script-src 'self' 'nonce-…' 'strict-dynamic'`, `upgrade-insecure-requests`), Dev
 gelockert (`'unsafe-eval' 'unsafe-inline'`, `ws:` — sonst bricht HMR). Die Middleware setzt die CSP
 **auch auf die Request-Header**, damit Next seine Inline-(RSC/Hydration-)Skripte automatisch nonct;
-das Layout liest den Nonce über `headers().get('x-nonce')` und hängt ihn ans einzige eigene
-Inline-Skript (`data-js`). Folgen: `style-src` behält `'unsafe-inline'` (next/font + Next injizieren
-Inline-Styles); das Layout ist durch `headers()` **dynamisch** (kein statisches Prerender mehr). Wer
+das **Root**-Layout liest den Nonce über `headers().get('x-nonce')` und hängt ihn ans einzige
+eigene Inline-Skript. Folgen: `style-src` behält `'unsafe-inline'` (next/font + Next injizieren
+Inline-Styles); das Root-Layout ist durch `headers()` **dynamisch** (kein statisches Prerender mehr). Wer
 ein weiteres Inline-`<script>` ergänzt, muss ihm den Nonce mitgeben, sonst blockt Prod es.
 
 ## Bekannte Randbedingungen

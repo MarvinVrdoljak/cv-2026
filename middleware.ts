@@ -1,5 +1,6 @@
 import createMiddleware from 'next-intl/middleware'
 import type {NextRequest} from 'next/server'
+import {hasLocale} from 'next-intl'
 import {routing} from '@/i18n/routing'
 
 const handleI18nRouting = createMiddleware(routing)
@@ -39,6 +40,16 @@ function buildCsp(nonce: string, isProd: boolean): string {
   return directives.join('; ')
 }
 
+/**
+ * The locale as the URL states it. The root layout renders <html lang> and sits
+ * above the `[locale]` segment, so it has no param to read — this header is how
+ * it learns the language (app/layout.tsx explains why it lives up there).
+ */
+function localeOf(pathname: string): string {
+  const first = pathname.split('/')[1]
+  return hasLocale(routing.locales, first) ? first : routing.defaultLocale
+}
+
 export default function middleware(request: NextRequest) {
   const nonce = crypto.randomUUID().replace(/-/g, '')
   const csp = buildCsp(nonce, process.env.NODE_ENV === 'production')
@@ -48,6 +59,7 @@ export default function middleware(request: NextRequest) {
   // one inline script we own.
   request.headers.set('x-nonce', nonce)
   request.headers.set('content-security-policy', csp)
+  request.headers.set('x-locale', localeOf(request.nextUrl.pathname))
 
   const response = handleI18nRouting(request)
   response.headers.set('content-security-policy', csp)

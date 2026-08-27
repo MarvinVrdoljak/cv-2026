@@ -48,8 +48,14 @@ export type CvExperience = {
    * carries the stations a reader forms one from, not the whole record. The
    * flag sits on the entry rather than in a list of ids elsewhere that can
    * drift — and it says nothing about the entry's truth, only about paper.
+   *
+   * `'summary'` prints the `summary` sentence under the entry as well. One
+   * knob with two levels rather than a second flag: it is the same decision
+   * (how much of this station goes on the card), and the card only has room
+   * for a sentence or two — spend them where the sentence carries something
+   * the role title does not.
    */
-  card?: true
+  card?: true | 'summary'
 }
 
 export type CvSkillItem = {
@@ -85,7 +91,9 @@ export type CvEducation = {
   href?: string
   /** Credential / verification id, shown in mono next to the link. */
   credentialId?: string
-  /** Print this one on the one-page card — see `card` on `CvExperience`. */
+  /** Print this one on the one-page card — see `card` on `CvExperience`.
+      No `'summary'` level here: an education entry's note is a qualification
+      of the degree, not a description of work. */
   card?: true
 }
 
@@ -200,7 +208,10 @@ export const cv: Cv = {
         },
       ],
       stack: ['React', 'Next.js', 'TypeScript', 'Payload CMS', 'Three.js', 'WordPress', 'Figma'],
-      card: true,
+      /* With its sentence: the role title says "Senior Developer", the sentence
+         says since when, and that the step up happened here. A card cannot
+         make that point any other way. */
+      card: 'summary',
     },
     {
       id: 'exp-02',

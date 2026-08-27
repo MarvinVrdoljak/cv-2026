@@ -86,7 +86,7 @@ const s = StyleSheet.create({
   metaLink: {color: color.muted, textDecoration: 'none'},
 
   // ---- sections -------------------------------------------------------
-  section: {marginTop: space.lg},
+  section: {marginTop: space.md},
   paragraph: {marginBottom: space.sm, fontSize: size.body, lineHeight: leading.body},
 
   // The card's own entry shape: three columns of decreasing interface-ness —
@@ -116,6 +116,14 @@ const s = StyleSheet.create({
     fontSize: size.small,
     lineHeight: leading.heading,
     color: color.muted,
+  },
+  // Prose, so it takes the reading leading and the full ink — the muted line
+  // above it is meta about the station, this is the station.
+  lineSummary: {
+    marginTop: space.xs,
+    fontSize: size.small,
+    lineHeight: leading.body,
+    color: color.ink,
   },
 
   // ---- skills ---------------------------------------------------------
@@ -302,6 +310,11 @@ export function QrPdf({locale, labels, url}: QrPdfProps) {
                         ' · '
                       )}
                     </Text>
+                    {/* Only where the data asked for it — see `card` in cv.ts.
+                        Four sentences would be a second page. */}
+                    {entry.card === 'summary' ? (
+                      <Text style={s.lineSummary}>{entry.summary[locale]}</Text>
+                    ) : null}
                   </View>
                 </View>
               </GutterRow>

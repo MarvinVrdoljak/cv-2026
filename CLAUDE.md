@@ -207,21 +207,30 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   bleiben reine Funktionen von Daten + Labels.
 - **Kurzprofil-Karte (`doc=qr`):** [lib/pdf/QrPdf.tsx](lib/pdf/QrPdf.tsx) — **eine** Seite, die
   den Leser zurück ins Web schicken soll: Kopf, Kurzprofil, die ausgewählten Stationen
-  (Mono-Datumsspalte, Rolle, Arbeitgeberzeile), das Studium unter „Ausbildung" (dieselbe
-  dreispaltige Form wie eine Station, ohne Notiz und Credential-Zeile), die ausgewählten
-  Kenntnisse als Chips, unten ein Band mit QR-Code und Adresse. Highlights, die kurzen
+  (Mono-Datumsspalte, Rolle, Arbeitgeberzeile, bei `card: 'summary'` zusätzlich der
+  Zusammenfassungssatz), das Studium unter „Ausbildung" (dieselbe dreispaltige Form wie eine
+  Station, ohne Notiz und Credential-Zeile), die ausgewählten Kenntnisse als Chips, unten ein
+  Band mit QR-Code und Adresse. Highlights, die kurzen
   Zertifikate, Sprachen und der lange Rest der Kenntnisse bleiben dem vollen Dokument. Zwei Regeln halten die Karte ruhig — beim Erweitern einhalten: **eine Stimme
   pro Zeile** (Datum, Rolle und Arbeitgeber je auf ihrer eigenen Zeile; auf eine Zeile gedrängt
   waren es drei konkurrierende Signale) und **keine Farbe** (der Akzent ist für aktive Zustände
   am Bildschirm — auf einem Blatt mit einer Handlungsaufforderung liest eine rote Zeile als
   Warnung). Das Band hängt über `spacer` (`flexGrow`) am unteren Rand statt am Textende; passt
-  es nicht mehr, rutscht es auf ein zweites Blatt statt zu kollidieren. Aktuell ~40 pt Luft —
-  beim Erweitern die Seitenzahl prüfen (`/Count` im PDF), eine zweiseitige „einseitige Karte"
-  ist ein Fehler.
+  es nicht mehr, rutscht es auf ein zweites Blatt statt zu kollidieren. Aktuell **~35 pt Luft**
+  (gemessen: die Karte trägt `spacer.minHeight` bis 32 pt, bei 40 pt kippt sie) — beim Erweitern
+  die Seitenzahl prüfen (`/Count` im PDF), **in beiden Sprachen**: Deutsch läuft länger und
+  kippt zuerst. Eine zweiseitige „einseitige Karte" ist ein Fehler. Der Abschnittsabstand der
+  Karte steht deshalb auf `space.md`, nicht `space.lg` wie im vollen Dokument — das war der
+  Preis für den Zusammenfassungssatz an der ersten Station.
 - **Auswahl für die Karte:** `card: true` in [data/cv.ts](data/cv.ts) entscheidet, was auf die
   Karte kommt — an einem `CvSkillItem` (~20 Begriffe, das tägliche Handwerk), an einer
   `CvExperience` (die Stationen, die die Arbeit noch beschreiben; das Praktikum von 2013 ist
   bewusst nicht dabei) und an einer `CvEducation` (das Studium, nicht die Coursera-Zertifikate).
+  Eine Station kann statt `true` auch `'summary'` tragen: dann steht ihr Satz mit auf der Karte.
+  **Ein** Knopf mit zwei Stufen statt eines zweiten Flags — es ist dieselbe Entscheidung (wie
+  viel von dieser Station aufs Blatt), und das Blatt hat Platz für **einen** solchen Satz. Aktuell
+  trägt ihn `exp-01`: der Rollentitel sagt „Senior Developer", der Satz sagt, seit wann und dass
+  der Aufstieg dort passiert ist.
   Das Flag steht **am Eintrag**, nicht als zweite Liste — sonst driftet die Auswahl von den
   Daten weg; `QrPdf` filtert nur danach. Der
   Modellkontext ([cvContext.ts](lib/cvContext.ts)) sieht weiterhin **alles**: das Flag

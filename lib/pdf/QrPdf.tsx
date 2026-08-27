@@ -86,8 +86,12 @@ const s = StyleSheet.create({
   metaLink: {color: color.muted, textDecoration: 'none'},
 
   // ---- sections -------------------------------------------------------
-  section: {marginTop: space.md},
-  paragraph: {marginBottom: space.sm, fontSize: size.body, lineHeight: leading.body},
+  // One step below the full document's `space.section`: the card is denser, but
+  // the four sections still have to read as four. The smaller prose paid for it.
+  section: {marginTop: space.lg},
+  // Prose on the card runs one step below the full document's — see the note
+  // on `scanHint`.
+  paragraph: {marginBottom: space.sm, fontSize: size.small, lineHeight: leading.body},
 
   // The card's own entry shape: three columns of decreasing interface-ness —
   // the id, the period, then the substance. One voice per line, never two: a
@@ -193,7 +197,12 @@ const s = StyleSheet.create({
     letterSpacing: tracking.display,
     lineHeight: leading.heading,
   },
-  scanHint: {marginTop: space.sm, fontSize: size.body, lineHeight: leading.body},
+  // `small`, like every other sentence on the card (profile, station summary).
+  // The loudest text on the sheet has to stay the entry title, which keeps
+  // `body`; prose set at that same size made the page one flat volume — and
+  // the card is denser than the full document by design. Reading leading is
+  // kept, so the smaller size does not cost legibility.
+  scanHint: {marginTop: space.sm, fontSize: size.small, lineHeight: leading.body},
   // The one piece of mono on either medium that is not upper case: this is an
   // address meant to be typed, and a path is case-sensitive. Underlined
   // instead, because here the link is the instruction.

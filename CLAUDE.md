@@ -216,12 +216,15 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   waren es drei konkurrierende Signale) und **keine Farbe** (der Akzent ist für aktive Zustände
   am Bildschirm — auf einem Blatt mit einer Handlungsaufforderung liest eine rote Zeile als
   Warnung). Das Band hängt über `spacer` (`flexGrow`) am unteren Rand statt am Textende; passt
-  es nicht mehr, rutscht es auf ein zweites Blatt statt zu kollidieren. Aktuell **~35 pt Luft**
-  (gemessen: die Karte trägt `spacer.minHeight` bis 32 pt, bei 40 pt kippt sie) — beim Erweitern
-  die Seitenzahl prüfen (`/Count` im PDF), **in beiden Sprachen**: Deutsch läuft länger und
-  kippt zuerst. Eine zweiseitige „einseitige Karte" ist ein Fehler. Der Abschnittsabstand der
-  Karte steht deshalb auf `space.md`, nicht `space.lg` wie im vollen Dokument — das war der
-  Preis für den Zusammenfassungssatz an der ersten Station.
+  es nicht mehr, rutscht es auf ein zweites Blatt statt zu kollidieren. Aktuell **~50 pt Luft**
+  (gemessen: die Karte trägt `spacer.minHeight` bis 48 pt) — beim Erweitern die Seitenzahl prüfen
+  (`/Count` im PDF), **in beiden Sprachen**: Deutsch läuft länger und kippt zuerst. Eine
+  zweiseitige „einseitige Karte" ist ein Fehler. Woher der Platz kommt: **jede Prosa der Karte**
+  (Kurzprofil, Stationssatz, der Text im Scan-Band) läuft auf `size.small` statt `size.body` —
+  das hält den Eintragstitel als lautesten Text des Blattes (auf gleicher Größe war die Karte
+  eine flache Lautstärke) und hat den Abschnittsabstand finanziert, der mit `space.lg` eine
+  Stufe unter dem vollen Dokument (`space.section`) liegt, aber die vier Abschnitte als vier
+  lesen lässt.
 - **Auswahl für die Karte:** `card: true` in [data/cv.ts](data/cv.ts) entscheidet, was auf die
   Karte kommt — an einem `CvSkillItem` (~20 Begriffe, das tägliche Handwerk), an einer
   `CvExperience` (die Stationen, die die Arbeit noch beschreiben; das Praktikum von 2013 ist

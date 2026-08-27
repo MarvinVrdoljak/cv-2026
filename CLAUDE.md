@@ -249,9 +249,17 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   expliziten Klasse pro Element — keine Descendant-Selektoren.
 - **Tokens:** Farben, Spacing, Radien, Schriftgrößen ausschließlich über `var(--…)` aus
   `styles/base/tokens.css`. Keine Hex-Werte außerhalb dieser Datei (Stylelint bricht sonst ab).
-- **Eingabefelder:** Schriftgröße immer `var(--font-size-field)` — unter `pointer: coarse` sind
-  das 16px, weil iOS die Seite beim Fokussieren sonst hineinzoomt. Gilt für jedes Feld, in das
-  getippt wird (Chat-Eingabe, Abgleich-Textfeld, URL-Feld).
+- **Eingabefelder:** Schriftgröße immer `var(--font-size-field)` — die Interface-Größe, auf
+  jedem Gerät. Gilt für jedes Feld, in das getippt wird (Chat-Eingabe, Abgleich-Textfeld,
+  URL-Feld). iOS zoomt die Seite beim Fokussieren, wenn die Schrift unter 16px liegt; dagegen
+  steht **`maximumScale: 1`** im Viewport-Export ([app/layout.tsx](app/layout.tsx)), **nicht**
+  eine aufgeblasene Schrift im Feld (so war es bis zum 27.08.2026: `--font-size-field: 16px`
+  unter `pointer: coarse` — der Sprung von 14 auf 16px war deutlich sichtbar). Der Preis, offen
+  benannt: Safari ignoriert `maximum-scale` seit iOS 10 für echtes Pinch-Zoom, Chrome auf
+  Android hält sich daran und deckelt es auf 1× — eine bewusste WCAG-1.4.4-Konzession auf
+  Android. Muss sie weg, wird der Key **pro Plattform** ausgegeben (das Root-Layout ist über
+  `headers()` ohnehin dynamisch), nicht für alle geöffnet. `--font-size-field` bleibt als eigene
+  Naht: eine Zeile holt die 16px zurück.
 - **Einheiten:** Im Quellcode immer `px` schreiben — `postcss-pxtorem` konvertiert beim Build
   zu `rem`. Niemals `rem` von Hand (Ausnahme: `clamp()` in `tokens.css`).
 - **Breakpoints:** `@media (--bp-medium-up)` etc. aus `styles/base/media.css`.

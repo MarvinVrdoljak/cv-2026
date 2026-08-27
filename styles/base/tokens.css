@@ -54,9 +54,11 @@
   --font-size-h5: clamp(16px, 0.98rem + 0.15vw, 17px);
   --font-size-h6: clamp(14px, 0.85rem + 0.1vw, 15px);
 
-  /* Every field the reader types into. iOS zooms the whole page when a focused
-     field's text measures under 16px, so on a touch device the fields hold
-     exactly that — and the interface size everywhere else. */
+  /* Every field the reader types into — the interface size, on every device.
+     iOS zooms the whole page when a focused field's text measures under 16px;
+     that is held off by `maximumScale` in the viewport (see app/layout.tsx),
+     not by inflating the type here. This token stays a seam of its own: should
+     the viewport route ever have to go, one line brings the 16px back. */
   --font-size-field: var(--font-size-sm);
 
   --font-weight-body: 400;
@@ -151,15 +153,6 @@
     --block-spacing-sm: 44px;
     --block-spacing-md: 68px;
     --block-spacing-lg: 96px;
-  }
-}
-
-/* Touch input — see --font-size-field. Keyed on the pointer rather than on a
-   width: an iPhone in landscape is wider than the medium breakpoint and zooms
-   just the same. */
-@media (pointer: coarse) {
-  :root {
-    --font-size-field: 16px;
   }
 }
 

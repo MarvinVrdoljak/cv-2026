@@ -29,9 +29,24 @@ const plexMono = IBM_Plex_Mono({
 // must not be allowed to slide over it: this asks the browser to shrink the
 // layout viewport instead, which moves the fixed chrome up with it. Chrome and
 // Android honour it; Safari ignores it, which is what ViewportSync covers.
+//
+// `maximumScale: 1` buys back the interface size in the input fields. iOS zooms
+// the whole page when a focused field's text measures under 16px, and the only
+// lever on that is the viewport: with a maximum scale of 1 there is no zoom to
+// go to, so the fields can hold the same 13–14px as the rest of the interface
+// (see --font-size-field). It is deliberately **not** paired with
+// `userScalable: false` — one restriction, not two.
+//
+// The cost, eyes open: since iOS 10 Safari ignores this for a pinch, so zooming
+// by hand still works there, but Chrome on Android honours it and caps the
+// pinch at 1× unless the reader has "force enable zoom" on. That is a WCAG
+// 1.4.4 concession on Android, taken as a deliberate call. If it has to go
+// away, the fix is to hand this key out per platform (the layout is already
+// dynamic through `headers()`) rather than to widen it for everyone.
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
+  maximumScale: 1,
   interactiveWidget: 'resizes-content',
 }
 

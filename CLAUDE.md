@@ -48,6 +48,14 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   **FLIP-Animation** für die Umsortierung ([lib/dom.ts](lib/dom.ts)). `[id]`-Zitate werden
   über [RefText](components/app/RefText.tsx)/[EntryRef](components/app/EntryRef.tsx) zu
   interaktiven Chips (Hover leuchtet, Klick scrollt).
+- **Abschnittsreihenfolge:** [lib/sections.ts](lib/sections.ts) — `SECTIONS` ist die **einzige**
+  Quelle: Kurzprofil · Berufserfahrung · **Ausbildung** · Kenntnisse · Sprachen. Daraus kommen die
+  Sprungmarken der Kopfleiste, die laufenden Nummern (`sectionNumber()`, benutzt von
+  [CvSection](components/cv/CvSection.tsx) **und** beiden PDFs — nie von Hand getippt) und die
+  Reihenfolge der Notiz-Zusammenfassung ([marked.ts](lib/pdf/marked.ts)). Umsortieren heißt:
+  die Liste ändern **und** die JSX-Blöcke in [CvDocument](components/cv/CvDocument.tsx),
+  [CvPdf](lib/pdf/CvPdf.tsx), [QrPdf](lib/pdf/QrPdf.tsx) und die Schleifen in `marked.ts`
+  mitziehen — die Nummern folgen dann von selbst.
 - **Adressierbarkeit:** Jeder Eintrag rendert mit `id={entry.id}` **und** `data-entry={id}`.
   Matching/Chat setzen `data-highlight="true"` (Aufleuchten als CSS-Transition) und `order`
   auf den Experience-Flex-Items.
@@ -174,10 +182,11 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   kommen als Label-Objekt aus der Route ([labels.ts](lib/pdf/labels.ts)) — die Dokumente
   bleiben reine Funktionen von Daten + Labels.
 - **Kurzprofil-Karte (`doc=qr`):** [lib/pdf/QrPdf.tsx](lib/pdf/QrPdf.tsx) — **eine** Seite, die
-  den Leser zurück ins Web schicken soll: Kopf, Kurzprofil, die Stationen (Mono-Datumsspalte,
-  Rolle, Arbeitgeberzeile), die ausgewählten Kenntnisse als Chips, unten ein Band mit QR-Code
-  und Adresse. Highlights, Ausbildung, Sprachen und der lange Rest der Kenntnisse bleiben dem
-  vollen Dokument. Zwei Regeln halten die Karte ruhig — beim Erweitern einhalten: **eine Stimme
+  den Leser zurück ins Web schicken soll: Kopf, Kurzprofil, die ausgewählten Stationen
+  (Mono-Datumsspalte, Rolle, Arbeitgeberzeile), das Studium unter „Ausbildung" (dieselbe
+  dreispaltige Form wie eine Station, ohne Notiz und Credential-Zeile), die ausgewählten
+  Kenntnisse als Chips, unten ein Band mit QR-Code und Adresse. Highlights, die kurzen
+  Zertifikate, Sprachen und der lange Rest der Kenntnisse bleiben dem vollen Dokument. Zwei Regeln halten die Karte ruhig — beim Erweitern einhalten: **eine Stimme
   pro Zeile** (Datum, Rolle und Arbeitgeber je auf ihrer eigenen Zeile; auf eine Zeile gedrängt
   waren es drei konkurrierende Signale) und **keine Farbe** (der Akzent ist für aktive Zustände
   am Bildschirm — auf einem Blatt mit einer Handlungsaufforderung liest eine rote Zeile als
@@ -185,10 +194,13 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   es nicht mehr, rutscht es auf ein zweites Blatt statt zu kollidieren. Aktuell ~40 pt Luft —
   beim Erweitern die Seitenzahl prüfen (`/Count` im PDF), eine zweiseitige „einseitige Karte"
   ist ein Fehler.
-- **Auswahl der Kenntnisse:** `card: true` an einem `CvSkillItem` in [data/cv.ts](data/cv.ts)
-  entscheidet, was auf die Karte kommt (~20 Begriffe, das tägliche Handwerk). Das Flag steht
-  **am Begriff**, nicht als zweite Liste — sonst driftet die Auswahl von den Daten weg. Der
-  Modellkontext ([cvContext.ts](lib/cvContext.ts)) sieht weiterhin **alle** Begriffe: das Flag
+- **Auswahl für die Karte:** `card: true` in [data/cv.ts](data/cv.ts) entscheidet, was auf die
+  Karte kommt — an einem `CvSkillItem` (~20 Begriffe, das tägliche Handwerk), an einer
+  `CvExperience` (die Stationen, die die Arbeit noch beschreiben; das Praktikum von 2013 ist
+  bewusst nicht dabei) und an einer `CvEducation` (das Studium, nicht die Coursera-Zertifikate).
+  Das Flag steht **am Eintrag**, nicht als zweite Liste — sonst driftet die Auswahl von den
+  Daten weg; `QrPdf` filtert nur danach. Der
+  Modellkontext ([cvContext.ts](lib/cvContext.ts)) sieht weiterhin **alles**: das Flag
   ist eine Entscheidung über Papier, nicht über Wahrheit. Der Chip-Block ist der **einzige**
   Block der Karte ohne id-Spalte und läuft deshalb über die volle Breite: ein halbes Dutzend
   Gruppen-ids neben einer Chip-Wolke zeigt auf nichts Bestimmtes — die Chips sind nicht je ein

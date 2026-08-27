@@ -2,7 +2,7 @@ import React from 'react'
 import {Document, Image, Link, StyleSheet, Text, View} from '@react-pdf/renderer'
 import type {Locale} from '@/i18n/routing'
 import {cv} from '@/data/cv'
-import {SECTIONS, type SectionKey} from '@/lib/sections'
+import {sectionNumber} from '@/lib/sections'
 import {
   durationInMonths,
   formatFullDate,
@@ -158,8 +158,6 @@ const s = StyleSheet.create({
   },
 })
 
-const num = (key: SectionKey) => SECTIONS.indexOf(key) + 1
-
 type CvPdfProps = {
   locale: Locale
   labels: CvPdfLabels
@@ -212,7 +210,7 @@ export function CvPdf({locale, labels}: CvPdfProps) {
 
         {/* ---- 01 profile ---- */}
         <View style={s.section}>
-          <SectionHead index={num('profile')} title={labels.sections.profile} />
+          <SectionHead index={sectionNumber('profile')} title={labels.sections.profile} />
           <GutterRow id={cv.profile.id} keepTogether={false} divider={false}>
             {(cv.profile.text[locale] ?? cv.profile.text.de)
               .split('\n')
@@ -230,7 +228,7 @@ export function CvPdf({locale, labels}: CvPdfProps) {
 
         {/* ---- 02 experience ---- */}
         <View style={s.section}>
-          <SectionHead index={num('experience')} title={labels.sections.experience} />
+          <SectionHead index={sectionNumber('experience')} title={labels.sections.experience} />
           {cv.experience.map((entry, index) => {
             const {years, months} = splitDuration(durationInMonths(entry.from, entry.to))
             // Split "Company · Vollzeit" so only the company name links.
@@ -280,27 +278,9 @@ export function CvPdf({locale, labels}: CvPdfProps) {
           })}
         </View>
 
-        {/* ---- 03 skills ---- */}
+        {/* ---- 03 education ---- */}
         <View style={s.section}>
-          <SectionHead index={num('skills')} title={labels.sections.skills} />
-          {cv.skills.map((group, index) => (
-            <GutterRow id={group.id} key={group.id} divider={index > 0}>
-              <Text style={s.groupLabel}>{group.label[locale]}</Text>
-              <View style={s.chips}>
-                {group.items.map((item) => (
-                  <View style={s.chip} key={item.name}>
-                    <Text style={s.chipLabel}>{item.name}</Text>
-                  </View>
-                ))}
-              </View>
-              {group.note ? <Text style={s.note}>{group.note[locale]}</Text> : null}
-            </GutterRow>
-          ))}
-        </View>
-
-        {/* ---- 04 education ---- */}
-        <View style={s.section}>
-          <SectionHead index={num('education')} title={labels.sections.education} />
+          <SectionHead index={sectionNumber('education')} title={labels.sections.education} />
           {cv.education.map((entry, index) => (
             <GutterRow id={entry.id} key={entry.id} divider={index > 0}>
               <View style={s.entryMeta}>
@@ -321,9 +301,27 @@ export function CvPdf({locale, labels}: CvPdfProps) {
           ))}
         </View>
 
+        {/* ---- 04 skills ---- */}
+        <View style={s.section}>
+          <SectionHead index={sectionNumber('skills')} title={labels.sections.skills} />
+          {cv.skills.map((group, index) => (
+            <GutterRow id={group.id} key={group.id} divider={index > 0}>
+              <Text style={s.groupLabel}>{group.label[locale]}</Text>
+              <View style={s.chips}>
+                {group.items.map((item) => (
+                  <View style={s.chip} key={item.name}>
+                    <Text style={s.chipLabel}>{item.name}</Text>
+                  </View>
+                ))}
+              </View>
+              {group.note ? <Text style={s.note}>{group.note[locale]}</Text> : null}
+            </GutterRow>
+          ))}
+        </View>
+
         {/* ---- 05 languages ---- */}
         <View style={s.section}>
-          <SectionHead index={num('languages')} title={labels.sections.languages} />
+          <SectionHead index={sectionNumber('languages')} title={labels.sections.languages} />
           {cv.languages.map((entry, index) => (
             <GutterRow id={entry.id} key={entry.id} divider={index > 0}>
               {/* Same shape as every other entry — mono line above, title

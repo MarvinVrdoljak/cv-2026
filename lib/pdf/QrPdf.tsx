@@ -2,7 +2,7 @@ import React from 'react'
 import {Document, Image, Link, Path, StyleSheet, Svg, Text, View} from '@react-pdf/renderer'
 import type {Locale} from '@/i18n/routing'
 import {cv} from '@/data/cv'
-import {SECTIONS, type SectionKey} from '@/lib/sections'
+import {sectionNumber} from '@/lib/sections'
 import {durationInMonths, formatFullDate, formatMonth, splitDuration} from '@/lib/format'
 import {printPortrait} from './assets'
 import {MONO} from './fonts'
@@ -15,12 +15,17 @@ import {color, leading, size, space, tracking} from './theme'
  * The one-page card: enough to decide whether to read on, and a way in.
  *
  * This is the sheet that gets handed over or attached — a first impression,
- * not the CV. So it carries the parts a reader forms an opinion from (who, the
- * profile, the stations, the skills marked `card` in the data) and leaves out
- * what only matters once they are interested: per-station highlights,
- * education, languages, the long tail of every term that is true. Those live
- * in the full document and, above all, in the interactive CV the code points
- * at — the point of this page is to stop being paper.
+ * not the CV. So it carries the parts a reader forms an opinion from: who, the
+ * profile, and whatever the data marks `card` — the stations that still
+ * describe the work, the degree, the terms that are daily practice. It leaves
+ * out what only matters once the reader is interested: per-station highlights,
+ * languages, the short certificates, the long tail of every term that is true.
+ * Those live in the full document and, above all, in the interactive CV the
+ * code points at — the point of this page is to stop being paper.
+ *
+ * Which entries those are is a decision about paper and belongs to the data
+ * (`card` on the entry), not here. This file only prints them — and stays one
+ * sheet: flag another entry and check the page count.
  *
  * Same source and same typographic system as the other two documents. The
  * stations and groups keep their ids, so a reader who scans the code finds the
@@ -195,7 +200,11 @@ const s = StyleSheet.create({
   code: {width: QR_SIZE, height: QR_SIZE},
 })
 
-const num = (key: SectionKey) => SECTIONS.indexOf(key) + 1
+/** The flagged stations, in CV order. */
+const cardExperience = cv.experience.filter((entry) => entry.card)
+
+/** The flagged qualifications — the degree, not the afternoon certificates. */
+const cardEducation = cv.education.filter((entry) => entry.card)
 
 /** The flagged terms, in CV order. */
 const cardItems = cv.skills.flatMap((group) =>
@@ -256,7 +265,7 @@ export function QrPdf({locale, labels, url}: QrPdfProps) {
 
         {/* ---- 01 profile ---- */}
         <View style={s.section}>
-          <SectionHead index={num('profile')} title={labels.sections.profile} />
+          <SectionHead index={sectionNumber('profile')} title={labels.sections.profile} />
           <GutterRow id={cv.profile.id} keepTogether={false} divider={false} compact>
             {(cv.profile.text[locale] ?? cv.profile.text.de)
               .split('\n')
@@ -274,8 +283,8 @@ export function QrPdf({locale, labels, url}: QrPdfProps) {
 
         {/* ---- 02 experience, one station per row ---- */}
         <View style={s.section}>
-          <SectionHead index={num('experience')} title={labels.sections.experience} />
-          {cv.experience.map((entry, index) => {
+          <SectionHead index={sectionNumber('experience')} title={labels.sections.experience} />
+          {cardExperience.map((entry, index) => {
             const {years, months} = splitDuration(durationInMonths(entry.from, entry.to))
             const [company, ...rest] = entry.organisation.split(' · ')
 
@@ -300,9 +309,33 @@ export function QrPdf({locale, labels, url}: QrPdfProps) {
           })}
         </View>
 
-        {/* ---- 03 skills, the flagged terms as one set of chips ---- */}
+        {/* ---- 03 education, the degree only ---- */}
+        {cardEducation.length > 0 ? (
+          <View style={s.section}>
+            <SectionHead index={sectionNumber('education')} title={labels.sections.education} />
+            {cardEducation.map((entry, index) => (
+              <GutterRow id={entry.id} key={entry.id} divider={index > 0} compact>
+                <View style={s.line}>
+                  <Text style={s.lineKey}>
+                    {formatMonth(entry.from, locale)} –{' '}
+                    {entry.to ? formatMonth(entry.to, locale) : labels.present}
+                  </Text>
+                  <View style={s.lineBody}>
+                    <Text style={s.lineTitle}>{entry.qualification[locale]}</Text>
+                    {/* No note and no credential line: the card carries the
+                        degree, and everything that qualifies it is a click or
+                        a page away. */}
+                    <Text style={s.lineDetail}>{entry.institution}</Text>
+                  </View>
+                </View>
+              </GutterRow>
+            ))}
+          </View>
+        ) : null}
+
+        {/* ---- 04 skills, the flagged terms as one set of chips ---- */}
         <View style={s.section}>
-          <SectionHead index={num('skills')} title={labels.sections.skills} />
+          <SectionHead index={sectionNumber('skills')} title={labels.sections.skills} />
           {/* The terms flagged `card` in the data, in CV order, out of their
               groups: seven labelled rows are half this page, and a card is
               read in one pass. The selection lives with the data (see the note

@@ -1,14 +1,10 @@
 import React from 'react'
-import {sectionId, type SectionKey} from '@/lib/sections'
+import {sectionId, sectionNumber, type SectionKey} from '@/lib/sections'
 import styles from './CvSection.module.css'
 
 type CvSectionProps = {
   section: SectionKey
   title: string
-  /** 1-based position in the document — shown as the section's running number.
-      A zero-padded figure next to a heading reads as an index, never a tally,
-      so it must be the ordinal, not an entry count. */
-  index: number
   children: React.ReactNode
 }
 
@@ -16,8 +12,13 @@ type CvSectionProps = {
  * Section headings are set in mono: they label the document rather than
  * speak in its voice. The rule under them is the section's own baseline.
  */
-export function CvSection({section, title, index, children}: CvSectionProps) {
+export function CvSection({section, title, children}: CvSectionProps) {
   const id = sectionId(section)
+  /* The running number is the section's position in `SECTIONS`, not a prop:
+     a zero-padded figure next to a heading reads as an index, never a tally,
+     and an index that is typed out per call site drifts the moment the
+     document is reordered. */
+  const index = sectionNumber(section)
 
   return (
     <section className={styles.root} id={id} aria-labelledby={`${id}-title`} data-print="section">

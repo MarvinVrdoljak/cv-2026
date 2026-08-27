@@ -35,11 +35,11 @@ export async function CvDocument({locale}: CvDocumentProps) {
       </p>
 
       <form className={styles.form} id={MARK_FORM_ID}>
-        <CvSection section="profile" title={sections('profile')} index={1}>
+        <CvSection section="profile" title={sections('profile')}>
           <CvProfile locale={locale} />
         </CvSection>
 
-        <CvSection section="experience" title={sections('experience')} index={2}>
+        <CvSection section="experience" title={sections('experience')}>
           {/* Flex column so relevance sorting can move entries with `order` */}
           <div className={styles.entries}>
             {cv.experience.map((entry) => (
@@ -48,15 +48,15 @@ export async function CvDocument({locale}: CvDocumentProps) {
           </div>
         </CvSection>
 
-        <CvSection section="skills" title={sections('skills')} index={3}>
-          <CvSkills locale={locale} />
-        </CvSection>
-
-        <CvSection section="education" title={sections('education')} index={4}>
+        <CvSection section="education" title={sections('education')}>
           <CvEducation locale={locale} />
         </CvSection>
 
-        <CvSection section="languages" title={sections('languages')} index={5}>
+        <CvSection section="skills" title={sections('skills')}>
+          <CvSkills locale={locale} />
+        </CvSection>
+
+        <CvSection section="languages" title={sections('languages')}>
           <CvLanguages locale={locale} />
         </CvSection>
       </form>

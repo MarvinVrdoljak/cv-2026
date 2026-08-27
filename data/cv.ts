@@ -41,6 +41,15 @@ export type CvExperience = {
   summary: LocalizedText
   highlights: LocalizedText[]
   stack: string[]
+  /**
+   * Print this station on the one-page card (`/api/pdf?doc=qr`).
+   *
+   * Same judgement as on a skill term: the card is a first impression, so it
+   * carries the stations a reader forms one from, not the whole record. The
+   * flag sits on the entry rather than in a list of ids elsewhere that can
+   * drift — and it says nothing about the entry's truth, only about paper.
+   */
+  card?: true
 }
 
 export type CvSkillItem = {
@@ -76,6 +85,8 @@ export type CvEducation = {
   href?: string
   /** Credential / verification id, shown in mono next to the link. */
   credentialId?: string
+  /** Print this one on the one-page card — see `card` on `CvExperience`. */
+  card?: true
 }
 
 export type CvLanguage = {
@@ -189,6 +200,7 @@ export const cv: Cv = {
         },
       ],
       stack: ['React', 'Next.js', 'TypeScript', 'Payload CMS', 'Three.js', 'WordPress', 'Figma'],
+      card: true,
     },
     {
       id: 'exp-02',
@@ -212,6 +224,7 @@ export const cv: Cv = {
         },
       ],
       stack: ['React Native', 'Expo', 'Next.js', 'Supabase', 'TypeScript', 'Figma'],
+      card: true,
     },
     {
       id: 'exp-03',
@@ -236,6 +249,7 @@ export const cv: Cv = {
         },
       ],
       stack: ['WordPress', 'JavaScript', 'HTML', 'CSS', 'User Experience (UX)'],
+      card: true,
     },
     {
       id: 'exp-04',
@@ -260,6 +274,7 @@ export const cv: Cv = {
         },
       ],
       stack: ['TYPO3', 'Contao', 'Sass', 'JavaScript', 'HTML', 'CSS'],
+      card: true,
     },
     {
       id: 'exp-05',
@@ -287,8 +302,11 @@ export const cv: Cv = {
      Webentwicklung) because the concrete frameworks next to them say it
      better; Three.js and Claude Code as too narrow for a first impression;
      SQL/SQLite/MongoDB because one database is the honest claim here (see the
-     note); and the four clouds, because the note below says there is no
-     enterprise-infrastructure specialisation and a card cannot carry a note. */
+     note); the four clouds, because the note below says there is no
+     enterprise-infrastructure specialisation and a card cannot carry a note;
+     the two AI umbrellas (Künstliche Intelligenz, Große Sprachmodelle) because
+     KI-gestützte Softwareentwicklung beside them is the concrete claim; and
+     Expo, because React Native next to it already names the platform. */
   skills: [
     {
       id: 'skl-01',
@@ -308,7 +326,7 @@ export const cv: Cv = {
         {name: 'React.js', card: true},
         {name: 'Next.js', card: true},
         {name: 'React Native', card: true},
-        {name: 'Expo', card: true},
+        {name: 'Expo'},
         {name: 'Three.js'},
         {name: 'Frontend-Entwicklung'},
         {name: 'Webentwicklung'},
@@ -319,8 +337,8 @@ export const cv: Cv = {
       id: 'skl-03',
       label: {de: 'KI-gestützte Entwicklung', en: 'AI-assisted development'},
       items: [
-        {name: 'Künstliche Intelligenz (KI)', card: true},
-        {name: 'Große Sprachmodelle (LLM)', card: true},
+        {name: 'Künstliche Intelligenz (KI)'},
+        {name: 'Große Sprachmodelle (LLM)'},
         {name: 'KI-gestützte Softwareentwicklung', card: true},
         {name: 'Prompt-Engineering'},
         {name: 'Claude Code'},
@@ -390,6 +408,7 @@ export const cv: Cv = {
       },
       institution: 'Mediadesign Hochschule für Design und Informatik',
       note: null,
+      card: true,
     },
     {
       id: 'edu-02',

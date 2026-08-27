@@ -36,7 +36,8 @@ type Options = {
   sections: PdfSectionLabels
 }
 
-/** Every addressable entry, in document order — the order marks print in. */
+/** Every addressable entry, in document order (`SECTIONS`) — the order marks
+    print in, so a note reads back against the CV. */
 function everyEntry({locale, present, sections}: Options): MarkedItem[] {
   const items: MarkedItem[] = [
     {
@@ -65,17 +66,6 @@ function everyEntry({locale, present, sections}: Options): MarkedItem[] {
     })
   }
 
-  for (const group of cv.skills) {
-    items.push({
-      id: group.id,
-      section: 'skills',
-      meta: null,
-      title: group.label[locale],
-      detail: group.note ? group.note[locale] : null,
-      items: group.items.map((i) => i.name),
-    })
-  }
-
   for (const entry of cv.education) {
     items.push({
       id: entry.id,
@@ -84,6 +74,17 @@ function everyEntry({locale, present, sections}: Options): MarkedItem[] {
       title: entry.qualification[locale],
       detail: entry.institution,
       items: [],
+    })
+  }
+
+  for (const group of cv.skills) {
+    items.push({
+      id: group.id,
+      section: 'skills',
+      meta: null,
+      title: group.label[locale],
+      detail: group.note ? group.note[locale] : null,
+      items: group.items.map((i) => i.name),
     })
   }
 

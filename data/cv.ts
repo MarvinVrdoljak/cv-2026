@@ -321,7 +321,14 @@ export const cv: Cv = {
   skills: [
     {
       id: 'skl-01',
-      label: {de: 'Sprachen & Fundament', en: 'Languages & fundamentals'},
+      /* Nicht "Sprachen": der Abschnitt Sprachen (Deutsch, Englisch) steht seit der
+         Umsortierung direkt hinter den Kenntnissen, und dasselbe Wort für zwei Dinge
+         auf zwei benachbarten Abschnitten liest als Fehler. "Fundament" bleibt, weil
+         HTML und CSS keine Programmiersprachen sind. */
+      label: {
+        de: 'Programmiersprachen & Fundament',
+        en: 'Programming languages & fundamentals',
+      },
       items: [
         {name: 'TypeScript', card: true},
         {name: 'JavaScript', card: true},

@@ -17,7 +17,10 @@ export async function StatusBar({locale}: StatusBarProps) {
   const t = await getTranslations('status')
 
   return (
-    <footer className={styles.root} aria-label={t('label')} data-print="hide">
+    // `data-status-bar` lets AppShell move this out of the way while the chat
+    // field has focus on a phone — see the note there. Same reach-in-by-attribute
+    // as `data-marks-readout` below: no module reads another module's classes.
+    <footer className={styles.root} aria-label={t('label')} data-print="hide" data-status-bar>
       <div className={styles.inner}>
         <dl className={styles.readouts}>
           <StatusReadouts />

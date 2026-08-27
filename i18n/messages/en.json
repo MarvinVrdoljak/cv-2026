@@ -113,7 +113,7 @@
     "qrTitle": "Profile",
     "qrScanLabel": "Scan to open",
     "qrScanTitle": "Interactive CV",
-    "qrScanHint": "Paste a job ad and read the match, ask about individual roles, mark entries."
+    "qrScanHint": "To find out more about me, feel free to visit my interactive CV. There you can match a job ad against my profile and put questions about me to the AI chat."
   },
   "status": {
     "label": "System status",

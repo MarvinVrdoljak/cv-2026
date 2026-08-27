@@ -57,6 +57,7 @@ export function CvPortrait() {
 
     let cols = 0
     let sizePx = 0
+    let sampledWidth = 0 // the width the current grid was built for
     let step = 0
     let stampCells = 0
     let radial: Float32Array = new Float32Array(0) // distance to centre, 0…1 at the corner
@@ -69,6 +70,7 @@ export function CvPortrait() {
     let raf = 0
     let prevFrame = 0 // rAF timestamp of the previous frame, 0 while idle
     let hovering = false
+    let tapFlashed = false // `pointerup` already answered this tap
     let last: {x: number; y: number} | null = null
 
     const source = new window.Image()
@@ -145,7 +147,11 @@ export function CvPortrait() {
         const v = (raw[i] - lo) / span
         coverage[i] = (v < 0 ? 0 : v > 1 ? 1 : v) ** DOT_GAMMA
       }
-      field = new Float32Array(cells)
+      // Carry the reveal over when the grid comes out the same size. A
+      // re-sample rebuilds the *picture*; it is no reason to blank what is
+      // revealed right now — a fresh zeroed field cuts a running fade back to
+      // bare dots in a single frame.
+      if (field.length !== cells) field = new Float32Array(cells)
 
       radial = new Float32Array(cells)
       const mid = (cols - 1) / 2
@@ -170,6 +176,7 @@ export function CvPortrait() {
       srcStep = photoLayer.width / cols
 
       palette()
+      sampledWidth = sizePx
       figure!.dataset.matrix = 'ready'
 
       draw()
@@ -325,9 +332,8 @@ export function CvPortrait() {
         draw()
       }
     }
-    function onClick() {
-      // Touch runs this too — with no hover to reveal by, the tap is the only
-      // way in, and the same sweep reads as a deliberate answer to it.
+    /** The gesture both media share: the whole photo, then the sweep back. */
+    function runTap() {
       if (reduceMotion) {
         // Nothing to animate: show the photo and let focus-out take it back.
         fill(1)
@@ -337,6 +343,17 @@ export function CvPortrait() {
       flash()
       ensureRunning()
     }
+
+    function onClick() {
+      // The trailing click of a tap `pointerup` already answered. WebKit can
+      // send it a frame or two later, and a second flash then reads as the
+      // photo snapping back to full just after it started to recede.
+      if (tapFlashed) {
+        tapFlashed = false
+        return
+      }
+      runTap()
+    }
     /**
      * Touch: the tap, taken from the pointer rather than from `click`.
      *
@@ -344,14 +361,32 @@ export function CvPortrait() {
      * the reveal should not hang off that heuristic. `pointerup` is not fired
      * for a gesture that turned into a scroll — that one ends in
      * `pointercancel` — so a swipe past the portrait still does not flash it.
-     * If `click` follows anyway, it runs the same absolute sweep again, which
-     * is why doing both is harmless.
+     * The `click` that normally follows is swallowed by `tapFlashed`, so the
+     * tap is answered exactly once however the engine reports it.
      */
     function onPointerUp() {
       if (!noHover) return
-      onClick()
+      // Set before the flash, and left standing if no click ever follows: the
+      // next tap's own `pointerup` sets it again, so the gesture never depends
+      // on the click arriving.
+      tapFlashed = true
+      runTap()
     }
+    /** Keyboard focus, as opposed to the focus a tap or a click leaves behind. */
+    function focusIsVisible() {
+      try {
+        return figure!.matches(':focus-visible')
+      } catch {
+        // Engines without the selector throw; there the old behaviour stands.
+        return true
+      }
+    }
+
     function onFocusIn() {
+      // A tap and a click focus this element too, and there the pointer gesture
+      // owns the reveal. Filling the field here as well snapped a fade that was
+      // already running back to the full photo.
+      if (!focusIsVisible()) return
       fill(1)
       draw()
     }
@@ -369,6 +404,12 @@ export function CvPortrait() {
 
     let resizeTimer = 0
     const onResize = () => {
+      // Mobile Safari fires `resize` *while scrolling* — its toolbars grow and
+      // shrink, so the viewport height moves under the finger. The grid's only
+      // input is the portrait's own width, and that does not move, so anything
+      // else has to be ignored: re-sampling on every scroll is what made a
+      // running fade jump straight to bare dots.
+      if (figure.clientWidth === sampledWidth) return
       window.clearTimeout(resizeTimer)
       resizeTimer = window.setTimeout(sample, 150)
     }

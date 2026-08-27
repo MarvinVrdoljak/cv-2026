@@ -130,8 +130,15 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   den Zerfall, der es endgültig wegnimmt); das synthetische enter/leave-Paar eines Taps ist
   **kein** Hover und wird auf `hover: none` verworfen; und der Tap kommt aus `pointerup`, nicht
   nur aus `click` — WebKit synthetisiert `click` nur für Elemente, die es als klickbar ansieht,
-  während ein zum Scrollen gewordener Zug in `pointercancel` endet und deshalb nicht blitzt.
+  während ein zum Scrollen gewordener Zug in `pointercancel` endet und deshalb nicht blitzt (der
+  nachlaufende `click` wird über `tapFlashed` verschluckt, sonst blitzt es zweimal).
   Reduzierte Bewegung und Tastaturfokus zeigen das Foto statisch, ohne JS bleibt das `<Image>`.
+  Drei Dinge dürfen den laufenden Rückzug **nie** anfassen: `resize` löst auf iOS **beim
+  Scrollen** aus (Browser-Leisten wachsen und schrumpfen) — deshalb re-sampelt `onResize` nur
+  bei geänderter **Breite** des Porträts, und ein Re-Sample übernimmt das bestehende Feld, statt
+  ein genulltes anzulegen; und `focusin` füllt nur bei **`:focus-visible`** (Tastatur), weil
+  Tap und Klick ebenfalls fokussieren und ein `fill(1)` dort den Rückzug auf das ganze Foto
+  zurückreißt. Alle drei sahen als „die Transition springt" aus.
 - **Typografie:** IBM Plex Sans (Inhalt) + IBM Plex Mono (Interface) via `next/font`. Der
   Sans/Mono-Wechsel trennt Inhalt von Interface — auch im Kopf: Name in der Display-Stimme
   (Sans 600), Rolle in der Interface-Stimme (Mono, uppercase, `tracking-label`, Tinte),

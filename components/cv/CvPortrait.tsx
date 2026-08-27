@@ -18,8 +18,18 @@ function hexToRgb(value: string): [number, number, number] {
  * pointer moves across it, the cells it passes reveal the real photo for a
  * moment and then fade back, leaving a trailing wake; the fading edge glows in
  * the accent. A per-cell "reveal field" that the pointer stamps into and that
- * decays every frame produces the lag. Keyboard focus / touch / reduced motion
- * simply show the whole photo; no-JS and print fall back to the plain image.
+ * decays every frame produces the lag.
+ *
+ * The matrix is the rest state on **every** device: a touch screen has no
+ * pointer to trace with, so it loses the wake — but not the picture. There the
+ * tap runs the same sweep a click runs on the desktop (whole photo at once,
+ * then receding from the rim inward), which is the one gesture both media
+ * share. Filling the field on touch instead, as this used to, meant the photo
+ * simply sat there, and the first tap's synthetic pointer-enter started the
+ * decay that took it away for good.
+ *
+ * Keyboard focus and reduced motion show the whole photo statically; no-JS and
+ * print fall back to the plain image.
  */
 export function CvPortrait() {
   const {photo, name} = cv.person
@@ -162,12 +172,10 @@ export function CvPortrait() {
       palette()
       figure!.dataset.matrix = 'ready'
 
-      // No pointer to trace with → just show the photo.
-      if (noHover) fill(1)
       draw()
     }
 
-    /** Sets the whole field to a value (focus / touch / reduced motion). */
+    /** Sets the whole field to a value (focus / reduced motion). */
     function fill(v: number) {
       field.fill(v)
     }
@@ -296,6 +304,10 @@ export function CvPortrait() {
     }
 
     function onEnter() {
+      // A tap emits one synthetic enter/leave pair around itself. That is not
+      // a hover: there is no wake to trace, and reading it as one is what used
+      // to start the decay and strand the portrait as dots.
+      if (noHover) return
       hovering = true
       if (reduceMotion) {
         fill(1)
@@ -305,6 +317,7 @@ export function CvPortrait() {
       }
     }
     function onLeave() {
+      if (noHover) return
       hovering = false
       last = null
       if (reduceMotion) {
@@ -313,18 +326,42 @@ export function CvPortrait() {
       }
     }
     function onClick() {
-      // Reduced motion and touch both already sit on the full photo, so there
-      // is nothing to reveal and nothing worth animating.
-      if (reduceMotion || noHover) return
+      // Touch runs this too — with no hover to reveal by, the tap is the only
+      // way in, and the same sweep reads as a deliberate answer to it.
+      if (reduceMotion) {
+        // Nothing to animate: show the photo and let focus-out take it back.
+        fill(1)
+        draw()
+        return
+      }
       flash()
       ensureRunning()
+    }
+    /**
+     * Touch: the tap, taken from the pointer rather than from `click`.
+     *
+     * WebKit only synthesises a click for elements it considers clickable, and
+     * the reveal should not hang off that heuristic. `pointerup` is not fired
+     * for a gesture that turned into a scroll — that one ends in
+     * `pointercancel` — so a swipe past the portrait still does not flash it.
+     * If `click` follows anyway, it runs the same absolute sweep again, which
+     * is why doing both is harmless.
+     */
+    function onPointerUp() {
+      if (!noHover) return
+      onClick()
     }
     function onFocusIn() {
       fill(1)
       draw()
     }
     function onFocusOut() {
-      if (reduceMotion || noHover) return
+      if (reduceMotion) {
+        // No wake to fade on, so this is the only way back to the matrix.
+        fill(0)
+        draw()
+        return
+      }
       // Let it fade on the wake's own schedule. Zeroing here would cut a
       // running click gesture dead the moment the pointer lands elsewhere.
       ensureRunning()
@@ -350,6 +387,7 @@ export function CvPortrait() {
     figure.addEventListener('pointermove', onPointerMove)
     figure.addEventListener('pointerenter', onEnter)
     figure.addEventListener('pointerleave', onLeave)
+    figure.addEventListener('pointerup', onPointerUp)
     figure.addEventListener('focusin', onFocusIn)
     figure.addEventListener('focusout', onFocusOut)
     window.addEventListener('resize', onResize)
@@ -361,6 +399,7 @@ export function CvPortrait() {
       figure.removeEventListener('pointermove', onPointerMove)
       figure.removeEventListener('pointerenter', onEnter)
       figure.removeEventListener('pointerleave', onLeave)
+      figure.removeEventListener('pointerup', onPointerUp)
       figure.removeEventListener('focusin', onFocusIn)
       figure.removeEventListener('focusout', onFocusOut)
       window.removeEventListener('resize', onResize)

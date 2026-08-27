@@ -22,9 +22,13 @@ module.exports = {
     // --- Cosmetics: this config enforces architecture, not formatting. ---
     // postcss-import resolves string notation; that's the convention here.
     'import-notation': 'string',
-    // -webkit-text-size-adjust has no standard equivalent browsers honour.
+    // -webkit-text-size-adjust and -webkit-tap-highlight-color have no
+    // standard equivalents browsers honour.
     // Must be a regex — a plain 'text-size-adjust' string does not match here.
-    'property-no-vendor-prefix': [true, {ignoreProperties: ['/text-size-adjust/']}],
+    'property-no-vendor-prefix': [
+      true,
+      {ignoreProperties: ['/text-size-adjust/', '/tap-highlight-color/']},
+    ],
     // Compact rule/token groups (h1–h6, token sections) are intentional.
     'rule-empty-line-before': null,
     'custom-property-empty-line-before': null,

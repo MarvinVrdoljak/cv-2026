@@ -121,6 +121,17 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   `x-locale`, das die [middleware.ts](middleware.ts) setzt (richtig bei **jeder**
   Dokument-Anfrage, auch ohne JS), und nach einem Sprachwechsel im laufenden Dokument zieht
   [DocumentLocale](components/app/DocumentLocale.tsx) das Attribut nach.
+- **Porträt ([CvPortrait](components/cv/CvPortrait.tsx)):** Punktraster auf einem Canvas, das
+  Foto ist die **Ausnahme**, nicht der Ruhezustand — auf **jedem** Gerät. Am Zeiger enthüllt die
+  Spur die Zellen, die sie berührt (Wake mit Akzent-Glut); auf Touch fällt die Spur weg, aber
+  **nicht das Bild**: der Tap fährt dieselbe Geste wie der Klick am Desktop (ganzes Foto, dann
+  Rückzug vom Rand nach innen). Drei Fallen, alle bezahlt: das Feld auf Touch **nicht** mit
+  `fill(1)` festsetzen (dann klebt das Foto, und der erste synthetische `pointerenter` startet
+  den Zerfall, der es endgültig wegnimmt); das synthetische enter/leave-Paar eines Taps ist
+  **kein** Hover und wird auf `hover: none` verworfen; und der Tap kommt aus `pointerup`, nicht
+  nur aus `click` — WebKit synthetisiert `click` nur für Elemente, die es als klickbar ansieht,
+  während ein zum Scrollen gewordener Zug in `pointercancel` endet und deshalb nicht blitzt.
+  Reduzierte Bewegung und Tastaturfokus zeigen das Foto statisch, ohne JS bleibt das `<Image>`.
 - **Typografie:** IBM Plex Sans (Inhalt) + IBM Plex Mono (Interface) via `next/font`. Der
   Sans/Mono-Wechsel trennt Inhalt von Interface — auch im Kopf: Name in der Display-Stimme
   (Sans 600), Rolle in der Interface-Stimme (Mono, uppercase, `tracking-label`, Tinte),

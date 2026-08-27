@@ -4,6 +4,12 @@
   width: 96px;
   margin: 0;
   aspect-ratio: 1;
+
+  /* The tap is a gesture the canvas answers itself. Without these two, WebKit
+     paints its grey box over the reveal and holds the tap back for a possible
+     double-tap zoom — both read as the portrait hesitating. */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Fallback photo: visible until the matrix has drawn, and for no-JS / print.

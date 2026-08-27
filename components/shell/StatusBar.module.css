@@ -7,10 +7,6 @@
   height: var(--chrome-bottom);
   border-top: 1px solid var(--color-rule-strong);
   background: var(--color-background);
-
-  /* Only ever driven from AppShell, which is the one place that sees both this
-     bar and the chat panel (see `data-status-bar` there). */
-  transition: transform var(--duration-base) var(--ease-standard);
 }
 
 .inner {

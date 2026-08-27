@@ -98,41 +98,6 @@
   pointer-events: none;
 }
 
-/* …and while someone is typing, it overshoots.
-   iOS 26 reserves a strip *below* the layout viewport for its own floating bars
-   (the URL pill and the form assistant with the arrows) and keeps painting the
-   page behind them — so with the keyboard out, the document scrolled past
-   directly under the chat bar, left and right of those bars. That strip cannot
-   be positioned into: it lies outside the viewport every fixed element here is
-   measured against, and the status bar at bottom: 0 already sits above it. So
-   the fill simply runs past the edge. The surplus costs nothing — wherever no
-   such strip exists it is off-screen, and the keyboard is drawn over it anyway.
-
-   Keyed on focus, not on a measurement: focus inside the bar *is* the keyboard
-   being out, in both viewport models (whether Safari resizes the layout
-   viewport or slides the keyboard over it). And it has to stay keyed on it —
-   at rest, a document scrolling behind Safari's own bar is ordinary browser
-   behaviour, and masking it there would hide real content.
-
-   It keeps the panel's own surface, because the status bar leaves this strip
-   while the field has focus (next rule): everything between the input row and
-   the keys is then the bar's base, with Safari's pills floating on it. One
-   ground, one tone — which is all that can be done about a band the browser
-   owns. */
-.panel:focus-within::after {
-  height: calc(max(var(--chrome-bottom), var(--keyboard-inset)) + 240px);
-}
-
-/* …and the readout steps aside while that field has focus.
-   With the keyboard out, Safari fills ~100px under the bar with its URL pill
-   and its form bar. Our own instrument line in there is a fourth band in that
-   space and pushes the field further from the keys, for a measurement nobody
-   reads while typing. It comes straight back on blur. Phone only — on the
-   desktop the chat is a column and the bar is nowhere near it (reset below). */
-.root:has(.panel:focus-within) [data-status-bar] {
-  transform: translateY(100%);
-}
-
 .root:has([data-mark]:checked) .panel {
   bottom: max(calc(var(--chrome-bottom) + var(--tray-height)), var(--keyboard-inset));
 }
@@ -180,12 +145,6 @@
 }
 
 @media (--bp-large-up) {
-  /* Nothing moves for focus here: the chat is a column beside the document,
-     the keyboard is hardware, and the status bar is the frame's bottom edge. */
-  .root:has(.panel:focus-within) [data-status-bar] {
-    transform: none;
-  }
-
   /* The chat is a column here, not a bar over the document, so only the
      status bar (and the tray, when it is out) needs room. */
   .frame {

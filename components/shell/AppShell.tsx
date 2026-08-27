@@ -6,8 +6,6 @@ import {StatusBar} from './StatusBar'
 import {NoteTray} from './NoteTray'
 import {KeyBindings} from './KeyBindings'
 import {ViewportSync} from './ViewportSync'
-// TEMPORARY, remove with the component itself.
-import {ViewportProbe} from './ViewportProbe'
 import styles from './AppShell.module.css'
 
 type AppShellProps = {
@@ -57,7 +55,6 @@ export async function AppShell({locale, children, panel}: AppShellProps) {
       <StatusBar locale={locale} />
       <KeyBindings />
       <ViewportSync />
-      <ViewportProbe />
     </div>
   )
 }

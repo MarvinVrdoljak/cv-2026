@@ -133,6 +133,12 @@ rendern. Alle drei OpenAI-Aufrufe streamen serverseitig.
   während ein zum Scrollen gewordener Zug in `pointercancel` endet und deshalb nicht blitzt (der
   nachlaufende `click` wird über `tapFlashed` verschluckt, sonst blitzt es zweimal).
   Reduzierte Bewegung und Tastaturfokus zeigen das Foto statisch, ohne JS bleibt das `<Image>`.
+  Dass es überhaupt antwortet, sagt ein Wort in der Interface-Stimme mitten im Bild
+  („Aufdecken"/„Reveal", Mono, uppercase, wie MARKIEREN oder SENDEN): erscheint nur bei
+  `data-matrix="ready"` (es gibt also nichts zu klicken, wenn es fehlt — auch der no-JS-Fall),
+  verabschiedet sich per CSS-Animation nach ~5 s und ist bei `data-touched` endgültig weg. Unter
+  `prefers-reduced-motion` steht es still da (`animation: none`, **keine** Dauer — base.css
+  klemmt jede Dauer auf 0.01 ms, das Ding wäre sonst sofort auf seinem Endbild und unsichtbar).
   Drei Dinge dürfen den laufenden Rückzug **nie** anfassen: `resize` löst auf iOS **beim
   Scrollen** aus (Browser-Leisten wachsen und schrumpfen) — deshalb re-sampelt `onResize` nur
   bei geänderter **Breite** des Porträts, und ein Re-Sample übernimmt das bestehende Feld, statt

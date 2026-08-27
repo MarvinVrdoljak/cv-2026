@@ -52,9 +52,82 @@
   transition: box-shadow var(--duration-base) var(--ease-standard);
 }
 
+/* One word in the middle of the portrait, in the interface voice — mono,
+   uppercase, tracked out, the same imperative as MARKIEREN or SENDEN. It
+   overlays rather than sits beside the portrait on purpose: the document head
+   is three bands at three volumes, and a fourth one that comes and goes must
+   not be allowed to move any of them.
+
+   Centred by translate, not by a flex box over the whole figure: the label is
+   the only child, and a box the size of the portrait would need its own ground
+   to stay legible — which would hide the very thing it points at. The ground
+   is the size of the word, so it only clears the dots it actually covers. */
+.hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 3px 6px 4px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--line-height-mono);
+  text-align: center;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+
+  /* Invisible until there is something to try — and it never becomes visible
+     without the canvas, which is also the no-JS case. */
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* In, held, out — one pass, no JavaScript timer. Long enough to be read once,
+   short enough that it is not part of the page. */
+.root[data-matrix='ready'] .hint {
+  animation: portrait-hint 5s var(--ease-standard) 0.8s forwards;
+}
+
+/* Tried it → the hint has nothing left to say. */
+.root[data-touched] .hint {
+  display: none;
+}
+
+@keyframes portrait-hint {
+  0% {
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  72% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+/* No fade to give, so it simply stands there until the portrait is tried.
+   `animation: none` and not a duration: base.css clamps every duration to
+   0.01ms under this query, which would end the animation on its last frame
+   (opacity 0) and swallow the hint entirely. */
+@media (prefers-reduced-motion: reduce) {
+  .root[data-matrix='ready'] .hint {
+    opacity: 1;
+    animation: none;
+  }
+}
+
 /* Print: drop the matrix, show the plain photo. */
 @media print {
-  .canvas {
+  .canvas,
+  .hint {
     display: none;
   }
 

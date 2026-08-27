@@ -2,6 +2,7 @@
 
 import {useEffect, useRef} from 'react'
 import Image from 'next/image'
+import {useTranslations} from 'next-intl'
 import {cv} from '@/data/cv'
 import {watchTheme} from '@/lib/theme'
 import styles from './CvPortrait.module.css'
@@ -32,6 +33,7 @@ function hexToRgb(value: string): [number, number, number] {
  * print fall back to the plain image.
  */
 export function CvPortrait() {
+  const t = useTranslations('cv')
   const {photo, name} = cv.person
   const figureRef = useRef<HTMLElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -182,6 +184,11 @@ export function CvPortrait() {
       draw()
     }
 
+    /** The hint has done its job the moment the reader tries the portrait. */
+    function markTouched() {
+      figure!.dataset.touched = '1'
+    }
+
     /** Sets the whole field to a value (focus / reduced motion). */
     function fill(v: number) {
       field.fill(v)
@@ -315,6 +322,7 @@ export function CvPortrait() {
       // a hover: there is no wake to trace, and reading it as one is what used
       // to start the decay and strand the portrait as dots.
       if (noHover) return
+      markTouched()
       hovering = true
       if (reduceMotion) {
         fill(1)
@@ -334,6 +342,7 @@ export function CvPortrait() {
     }
     /** The gesture both media share: the whole photo, then the sweep back. */
     function runTap() {
+      markTouched()
       if (reduceMotion) {
         // Nothing to animate: show the photo and let focus-out take it back.
         fill(1)
@@ -387,6 +396,7 @@ export function CvPortrait() {
       // owns the reveal. Filling the field here as well snapped a fade that was
       // already running back to the full photo.
       if (!focusIsVisible()) return
+      markTouched()
       fill(1)
       draw()
     }
@@ -446,6 +456,7 @@ export function CvPortrait() {
       window.removeEventListener('resize', onResize)
       stopWatchingTheme()
       delete figure.dataset.matrix
+      delete figure.dataset.touched
     }
   }, [photo])
 
@@ -465,6 +476,16 @@ export function CvPortrait() {
       />
       <canvas className={styles.canvas} ref={canvasRef} aria-hidden="true" />
       <span className={styles.frame} aria-hidden="true" />
+      {/* The one thing the portrait cannot say for itself: that it answers. It
+          shows only once the matrix has drawn (there is nothing to try before
+          that, and nothing at all without JavaScript), retires after a few
+          seconds, and is gone for good the moment the reader tries it — see
+          `data-touched`. aria-hidden because it is a hint for the eye: the
+          figure already carries its label, and the reveal is a flourish, not
+          information. */}
+      <span className={styles.hint} aria-hidden="true" data-print="hide">
+        {t('portraitHint')}
+      </span>
     </figure>
   )
 }

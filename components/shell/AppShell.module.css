@@ -98,6 +98,30 @@
   pointer-events: none;
 }
 
+/* …and while someone is typing, it overshoots.
+   iOS 26 reserves a strip *below* the layout viewport for its own floating bars
+   (the URL pill and the form assistant with the arrows) and keeps painting the
+   page behind them — so with the keyboard out, the document scrolled past
+   directly under the chat bar, left and right of those bars. That strip cannot
+   be positioned into: it lies outside the viewport every fixed element here is
+   measured against, and the status bar at bottom: 0 already sits above it. So
+   the fill simply runs past the edge. The surplus costs nothing — wherever no
+   such strip exists it is off-screen, and the keyboard is drawn over it anyway.
+
+   Keyed on focus, not on a measurement: focus inside the bar *is* the keyboard
+   being out, in both viewport models (whether Safari resizes the layout
+   viewport or slides the keyboard over it). And it has to stay keyed on it —
+   at rest, a document scrolling behind Safari's own bar is ordinary browser
+   behaviour, and masking it there would hide real content.
+
+   In --color-background, not the panel surface: the visible part of the strip
+   sits under the status bar, which carries that tone, so the two read as one
+   quiet ground instead of a sandwich. */
+.panel:focus-within::after {
+  height: calc(max(var(--chrome-bottom), var(--keyboard-inset)) + 240px);
+  background: var(--color-background);
+}
+
 .root:has([data-mark]:checked) .panel {
   bottom: max(calc(var(--chrome-bottom) + var(--tray-height)), var(--keyboard-inset));
 }
